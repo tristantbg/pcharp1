@@ -3,6 +3,7 @@ pages:
   template:
     - default
     - about
+    - exhibitions
 fields:
   generalSettings:
     label: Site Settings

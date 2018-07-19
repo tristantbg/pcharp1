@@ -1,6 +1,8 @@
 title: About
 pages: false
 files: false
+options:
+  delete: false
 fields:
   title:
     label: Title

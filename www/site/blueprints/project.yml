@@ -22,6 +22,9 @@ files:
         yes: "yes"
 fields:
   prevnext: prevnext
+  tab1:
+    label: General
+    type: tabs
   title:
     label: Title
     type: title
@@ -30,25 +33,23 @@ fields:
     label: Featured image
     type: image
     width: 1/4
-  sound:
-    label: Audio
-    type: select
-    options: audio
-    width: 3/4
-  inIntro:
-    label: Add to intro
-    type: toggle
-    width: 1/4
-    columns: 1
-  content:
-    label: Text
-    type: textarea
-  text:
-    label: Description
-    type: textarea
   medias:
     label: Images
     type: Images
-
+  tab2:
+    label: Infos
+    type: tabs
+  format:
+    label: Format
+    type: text
+    width: 3/4
+  date:
+    label: Year
+    type: date
+    format: YYYY
+    width: 1/4
+  text:
+    label: Description
+    type: textarea
 
 
