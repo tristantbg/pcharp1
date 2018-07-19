@@ -1,0 +1,18 @@
+title: About
+pages: false
+files: false
+fields:
+  title:
+    label: Title
+    type: text
+  text:
+    label: Description
+    type: textarea
+  contact:
+    label: Contact
+    type: textarea
+    width: 1/2
+  credits:
+    label: credits
+    type: textarea
+    width: 1/2
