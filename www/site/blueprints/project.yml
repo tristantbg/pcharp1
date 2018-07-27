@@ -13,8 +13,8 @@ files:
     caption:
       label: Caption
       type: textarea
-    notinintro:
-      label: Remove from intro
+    notingrid:
+      label: Remove from grid
       type: toggle
       default: no
       options:
@@ -28,28 +28,38 @@ fields:
   title:
     label: Title
     type: title
-    width: 3/4
-  featured:
-    label: Featured image
-    type: image
-    width: 1/4
-  medias:
-    label: Images
-    type: Images
-  tab2:
-    label: Infos
-    type: tabs
-  format:
-    label: Format
-    type: text
-    width: 3/4
+    width: 1/2
   date:
     label: Year
     type: date
     format: YYYY
     width: 1/4
+  featured:
+    label: Featured image
+    type: image
+    width: 1/4
+  format:
+    label: Format
+    type: text
+    width: 1/2
+  materials:
+    label: Materials
+    type: text
+    width: 1/2
   text:
     label: Description
+    type: textarea
+  medias:
+    label: Images
+    type: Images
+  tab2:
+    label: Texts
+    type: tabs
+  textFr :
+    label: Français
+    type: textarea
+  textEn :
+    label: English
     type: textarea
 
 

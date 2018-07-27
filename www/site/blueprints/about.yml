@@ -15,6 +15,6 @@ fields:
     type: textarea
     width: 1/2
   credits:
-    label: credits
+    label: Credits
     type: textarea
     width: 1/2
