@@ -3,11 +3,11 @@ pages:
   template:
     - project
   num:
-    mode: default
+    mode: date
     display: null
   max: null
   limit: 20
-  sort: false
+  sort: date desc
   hide: false
 files: false
 fields:

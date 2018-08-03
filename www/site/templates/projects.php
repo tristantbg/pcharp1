@@ -1,24 +1,29 @@
 <?php snippet('header') ?>
 
 <?php
-	$galleryPage = $page;
-	$galleryChilds = $galleryPage->children()->visible()->filterBy('inIntro','true');
-	$galleryImages = new Collection();
-	foreach ($galleryChilds as $c) {
-		 foreach ($c->medias()->toStructure() as $i) {
-				 if($image = $i->toFile()) {
-            if (!$image->notinintro()->bool()) {
-              $galleryImages->data[] = $i->toFile();
-            }
-         }
-		 }
-	}
+  // $galleryPage = $page;
+  // $galleryChilds = $galleryPage->children()->visible()->filterBy('inIntro','true');
+  // $galleryImages = new Collection();
+  // foreach ($galleryChilds as $c) {
+  //   foreach ($c->medias()->toStructure() as $i) {
+  //       if($image = $i->toFile()) {
+ //            if (!$image->notinintro()->bool()) {
+ //              $galleryImages->data[] = $i->toFile();
+ //            }
+ //         }
+  //   }
+  // }
 
-  $introImage = $galleryImages->shuffle()->first();
+ //  $introImage = $galleryImages->shuffle()->first();
 
+
+
+if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->toStructure()->shuffle()->first()->toFile()){
   echo '<div id="intro" class="' . $introImage->orientation() . '">';
   snippet('responsive-image', ['file' => $introImage]);
   echo '</div>';
+}
 ?>
+
 
 <?php snippet('footer') ?>

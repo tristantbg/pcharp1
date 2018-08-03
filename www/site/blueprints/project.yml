@@ -10,9 +10,30 @@ files:
   width: null
   height: null
   fields:
+    textSettings:
+      label: Text Settings
+      type: headline
+    imageTitle:
+      label: Title
+      type: text
+    imageFormat:
+      label: Format
+      type: text
+      width: 1/2
+    imageMaterials:
+      label: Materials
+      type: text
+      width: 1/2
+    imageText:
+      label: Description
+      help: Overrides the one by default
+      type: textarea
     caption:
       label: Caption
       type: textarea
+    gridSettings:
+      label: Grid Settings
+      type: headline
     notingrid:
       label: Remove from grid
       type: toggle
@@ -20,6 +41,26 @@ files:
       options:
         no: "no"
         yes: "yes"
+    videoSettings:
+      label: Video Settings
+      type: headline
+    stream:
+      label: Video external stream link (.M3U8)
+      type: url
+    mp4:
+      label: Video external file link (.MP4)
+      type: url
+    mp4:
+      label: Video external file link (.WEBM)
+      type: url
+    filemp4:
+      label: Video File (.MP4)
+      type: select
+      options: videos
+    filewebm:
+      label: Video File (.WEBM)
+      type: select
+      options: videos
 fields:
   prevnext: prevnext
   tab1:
@@ -33,6 +74,8 @@ fields:
     label: Year
     type: date
     format: YYYY
+    default: today
+    required: true
     width: 1/4
   featured:
     label: Featured image

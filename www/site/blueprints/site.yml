@@ -5,6 +5,12 @@ pages:
     - about
     - entries
 fields:
+  introSettings:
+    label: Intro Settings
+    type: headline
+  introImages:
+    label: Intro images
+    type: images
   generalSettings:
     label: Site Settings
     type: headline
