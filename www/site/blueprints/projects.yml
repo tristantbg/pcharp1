@@ -2,12 +2,9 @@ title: Projects
 pages:
   template:
     - project
-  num:
-    mode: date
-    display: null
   max: null
-  limit: 20
-  sort: date desc
+  limit: 200
+  # sort: date desc
   hide: false
 files: false
 fields:

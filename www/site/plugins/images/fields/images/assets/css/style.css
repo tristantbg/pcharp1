@@ -1,3 +1,7 @@
+.images-item.in-grid {
+  border-bottom: 3px solid red;
+}
+
 .field-with-images .images-add-button {
   cursor: pointer; }
   .field-with-images .images-add-button.open {
@@ -213,6 +217,12 @@
       top: 50%;
       left: 50%;
       transform: translateY(-50%) translateX(-50%); }
+
+.modal-content .field-with-images .imagesgrid.filled {
+  background-color: #DDDDDD;
+  padding: 1.5em;
+  padding-bottom: 0;
+  margin-bottom: auto; }
 
 @media screen and (max-width: 800px) {
   .field-with-images .imagesgrid .empty {
