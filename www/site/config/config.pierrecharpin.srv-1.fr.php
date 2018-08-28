@@ -15,7 +15,11 @@ for more information: http://getkirby.com/license
 
 */
 
+<<<<<<< HEAD
 @include __DIR__ . DS . 'licence.php';
+=======
+@include __DIR__ . DS . 'license.php';
+>>>>>>> 05ada4e7f8b3b04eb84f2f17816a6ded60e68fb0
 
 /*
 

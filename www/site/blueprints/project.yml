@@ -15,29 +15,47 @@ files:
       type: headline
     imageTitle:
       label: Title
+      help: Overrides the one by default
+      type: text
+    imageSubtitle:
+      label: Subtitle
+      help: Overrides the one by default
+      type: text
+    imageType:
+      label: Type
+      help: Overrides the one by default
       type: text
     imageFormat:
       label: Format
-      type: text
+      help: Overrides the one by default
+      type: simplemde
+      buttons:
+        - link
+        - pagelink
       width: 1/2
     imageMaterials:
       label: Materials
-      type: text
+      help: Overrides the one by default
+      type: simplemde
+      buttons:
+        - link
+        - pagelink
       width: 1/2
     imageText:
       label: Description
       help: Overrides the one by default
-      type: textarea
-    caption:
-      label: Caption
-      type: textarea
+      type: simplemde
+      buttons:
+        - link
+        - pagelink
+        - email
     gridSettings:
       label: Grid Settings
       type: headline
-    notingrid:
+    notInGrid:
       label: Remove from grid
       type: toggle
-      default: no
+      default: true
       options:
         no: "no"
         yes: "yes"
@@ -81,17 +99,35 @@ fields:
     label: Featured image
     type: image
     width: 1/4
+  subtitle:
+    label: Subtitle
+    type: text
+    width: 1/2
+  type:
+    label: Type
+    type: text
+    width: 1/2
   format:
     label: Format
-    type: text
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
     width: 1/2
   materials:
     label: Materials
-    type: text
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
     width: 1/2
   text:
     label: Description
-    type: textarea
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
+      - email
   medias:
     label: Images
     type: Images
@@ -100,9 +136,17 @@ fields:
     type: tabs
   textFr :
     label: Français
-    type: textarea
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
+      - email
   textEn :
     label: English
-    type: textarea
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
+      - email
 
 

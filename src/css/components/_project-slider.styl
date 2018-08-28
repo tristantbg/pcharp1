@@ -1,26 +1,41 @@
-#page-content[page-type=project]
+[page-type=project]
 	.slider
+		width 100%
 		height 100vh
 		hideselect()
+		.slider-footer
+			position absolute
+			bottom 0
+			width 100%
+			display flex
+			// justify-content space-between
+			z-index 2
+			background $primary
+			padding-top 0.4rem
+			small()
+			.caption
+				margin-left 1em
+		.flickity-viewport
+			width 100%
 		.flickity-slider
 			transform none !important
 		.slide
-			height 100%
 			width 100%
-			display inline-flex
-			justify-content center
 			left 0 !important
 			visibility hidden
-			.content
+			+above($sm + 1)
 				height 100%
-				display flex
-				justify-content center
-				align-items center
-				padding $padding
-				img
-					width 100%
+			.content
+				width 100%
+				padding-bottom 1.2rem
+				+above($sm + 1)
+					height 100%
+			img
+				width 100%
+				+above($sm + 1)
 					height 100%
 					object-fit contain
+					object-position top left
 			.content.video
 				width 100%
 				.plyr--ready
@@ -30,9 +45,14 @@
 					width 100%
 					height 100%
 					object-fit contain
-		.slide.is-selected
-			visibility visible
-			z-index 1
+			&.format-png, &.format-gif
+				background alpha($secondary, 0.05)
+				img
+					mix-blend-mode darken
+					object-position center
+			&.is-selected
+				visibility visible
+				z-index 1
 		.flickity-prev-next-button
 			cursor none !important
 			top 0
@@ -41,62 +61,29 @@
 			margin-top 0
 			background transparent
 			padding 0
-			transform(none)
+			transform none
 			border none
 			border-radius 0
-			z-index 10
+			z-index 1
+			overflow hidden
 			+below($md)
 				display none
 			svg
-				display none
+				// display none
+				align()
+				width 2rem
+				height 1.4rem
 			&.previous
 				left 0
 			&.next
 				right 0
 			&[disabled]
 				display none
-		#mouse-nav
-			align()
-			position fixed
-			top 0
-			left 0
-			color $secondary
-			z-index 300
-			white-space nowrap
-			cursor none
-			pointer-events none
-			display none
-			&::before
-				align()
-				pointer-events none
-		&[data-media="video"]:not(.nav-hover)
-			#mouse-nav
-				&::before
-					content 'Play'
-			&.pause
-				#mouse-nav::before
-					content 'Pause'
-			&.loading
-				#mouse-nav::before
-					content 'Loading'
-		&[data-media="video"]
-			.flickity-prev-next-button
-				width 15%
-			.plyr__controls
-				cursor auto
-				+below($md)
+			&:active
+				opacity 1
+			&:focus
+				box-shadow none
+				outline none
+			&:not(:hover)
+				svg
 					display none
-			.plyr--stopped
-				.plyr__controls
-					opacity 0
-		&[data-media="image"], &.nav-hover
-			&.left
-				#mouse-nav::before
-					content 'Prev'
-			&.right
-				#mouse-nav::before
-					content 'Next'
-		&:hover
-			#mouse-nav
-				+above($md)
-					display block

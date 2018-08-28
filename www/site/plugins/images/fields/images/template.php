@@ -43,7 +43,7 @@
        if(in_array($f, $field->value())) $valueImages[] = $f;
      ?>
      
-     <div class="images-item <?php e(in_array($file->filename(), $field->value()), 'selected') ?>" data-image="<?php __($file->filename()) ?>" data-helper="<?php __($file->filename()) ?>">
+     <div class="images-item <?php e(in_array($file->filename(), $field->value()), 'selected') ?><?php e(!$file->notInGrid()->bool(), ' in-grid') ?>" data-image="<?php __($file->filename()) ?>" data-helper="<?php __($file->filename()) ?>">
          <figure title="<?php __($file->filename()) ?>" class="images-figure">
            <a class="images-preview images-preview-is-<?php __($file->type()) ?>" href="<?php __($file->url('edit')) ?>">
              <img src="<?php __($file->crop(400, 266)->url()) ?>" alt="<?php __($file->filename()) ?>">

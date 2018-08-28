@@ -1,7 +1,12 @@
-webfont('Genath', 'GenathRegular')
+webfont('AGJB2', 'AGJB2')
+webfont('TrumpMedRom', 'TrumpMedRom')
+
+sans-serif()
+	font-family AGJB2, Helvetica, Arial, sans-serif
+	letter-spacing 0.07em
 
 text()
-	font-family Genath, Times New Roman, serif
+	font-family TrumpMedRom, Times New Roman, serif
 
 // Main font styles
 
@@ -20,10 +25,10 @@ html
 		font-size 12px
 
 body
-	text()
+	sans-serif()
 	font-size $normal
 	line-height 1
-	// text-rendering optimizeLegibility
+	text-rendering optimizeLegibility
 	font-smoothing()
 
 p
