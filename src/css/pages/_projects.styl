@@ -1,6 +1,39 @@
+#project-description
+	position fixed
+	top $padding
+	left (1rem + $padding*2)
+	width $descriptionWidth
+	height 'calc(100% - %s)' % $padding
+	border-right 1px solid
+	background $primary
+	z-index 94
+
+#timeline-date
+	position fixed
+	top 0
+	right 0
+	height 100%
+	width (1rem + $padding*2)
+	z-index 98
+	transform translateX(100%) translateZ(0)
+	transition transform 300ms ease
+	// border-left 1px solid
+	// background $primary
+	pointer-events none
+	.inner
+		align()
+		transform rotate(-90deg) translateX(50%) translateY(-130%) translateZ(0)
+	&.visible
+		transform none
+
+.row.error
+	padding $padding
+
 #medias
 	opacity 0
 	border-bottom 1px solid $secondary
+	margin-left $descriptionWidth
+	width 'calc(100% - %s)' % $descriptionWidth
 	.media
 		box-shadow -1px -1px 0 0 $secondary, 1px 1px 0 0 $secondary, -1px 1px 0 0 $secondary, 1px -1px 0 0 $secondary
 		overflow hidden
@@ -20,8 +53,16 @@
 			opacity 0
 			z-index 2
 			// transform scale(0.9)
+		.hidden-images
+			position absolute
+			bottom 0.7rem
+			right 0.7rem
+			color $accent
+			opacity 0
+			z-index 2
+			// transform scale(0.9)
 		&:hover
-			.bullet
+			.bullet, .hidden-images
 				opacity 1
 				// transition transform 200ms ease-out
 				// transform scale(1)

@@ -10,6 +10,16 @@ files:
   width: null
   height: null
   fields:
+    gridSettings:
+      label: Grid Settings
+      type: headline
+    notInGrid:
+      label: Remove from grid
+      type: toggle
+      default: true
+      options:
+        no: "no"
+        yes: "yes"
     textSettings:
       label: Text Settings
       type: headline
@@ -49,16 +59,6 @@ files:
         - link
         - pagelink
         - email
-    gridSettings:
-      label: Grid Settings
-      type: headline
-    notInGrid:
-      label: Remove from grid
-      type: toggle
-      default: true
-      options:
-        no: "no"
-        yes: "yes"
     videoSettings:
       label: Video Settings
       type: headline

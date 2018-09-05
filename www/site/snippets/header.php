@@ -74,9 +74,9 @@
 
 <div id="main">
 
-  <div class="pjax">
-
   <?php snippet('menu') ?>
+  
+  <div class="pjax">
 
   <div id="container">
 

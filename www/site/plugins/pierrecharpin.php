@@ -7,109 +7,138 @@ file::$methods['formattedName'] = function($file, $key) {
 };
 
 file::$methods['uniqueId'] = function($file) {
-  return $file->page()->uid().'_'.$file->filename();
+    return $file->page()->uid().'_'.$file->filename();
 };
 
 file::$methods['getTags'] = function($file) {
-  $page = $file->page();
-  $tags = array_merge($page->tags()->split(','), $page->hiddentags()->split(','));
-  return implode(',', $tags);
-};
-
-file::$methods['displayCredits'] = function($file) {
     $page = $file->page();
-
-    $credits = '';
-
-    foreach ($page->credits()->toStructure() as $key => $c){
-        $credit = new Brick('div');
-        $credit->attr('class', 'credit');
-        $text = '';
-        if($c->title()->isNotEmpty()) $text .= $c->title().': ';
-        if($c->text()->isNotEmpty()) $text .= $c->text();
-        if($c->link()->isNotEmpty()) {
-          $link = new Brick('a');
-          $link->attr('href', $c->link());
-          $link->append($text);
-          $credit->append($link);
-        } else {
-          $credit->append($text);
-        }
-        $credits .= html($credit);
-    }
-
-    return esc($credits);
+    $tags = array_merge($page->tags()->split(','), $page->hiddentags()->split(','));
+    return implode(',', $tags);
 };
 
-page::$methods['displayCredits'] = function($page) {
-
-    $credits = '';
-
-    foreach ($page->credits()->toStructure() as $key => $c){
-        $credit = new Brick('div');
-        $credit->attr('class', 'credit');
-        $text = '';
-        if($c->title()->isNotEmpty()) $text .= $c->title().': ';
-        if($c->text()->isNotEmpty()) $text .= $c->text();
-        if($c->link()->isNotEmpty()) {
-          $link = new Brick('a');
-          $link->attr('href', $c->link());
-          $link->append($text);
-          $credit->append($link);
-        } else {
-          $credit->append($text);
-        }
-        $credits .= html($credit);
-    }
-
-    return $credits;
-};
-
-file::$methods['imageLink'] = function($file) {
+file::$methods['hiddenImages'] = function($file) {
     $page = $file->page();
+    $hiddenImages = 0;
 
-    if ($page->link()->isNotEmpty()) {
-      return '<a href="'.$page->link().'" target="_blank">Link</a>';
-    } else {
-      return '<a href="'.$file->url().'" target="_blank">Image link</a>';
-    }
-};
-
-file::$methods['relatedImages'] = function($file) {
-    $page = $file->page();
-
-    $relatedImages = '';
-    $idx = 1;
-
-    foreach ($page->medias()->toStructure()->shuffle() as $key => $f){
-        if($idx <= 4 && $f = $f->toFile()) {
-          if($f->filename() != $file->filename()) {  
-            $related = new Brick('div');
-            $related->attr('class', 'related lazy lazyload');
-            $related->attr('data-target', $f->uniqueId());
-            $related->attr('data-bg', $f->crop(80, 80)->url());
-            $relatedImages .= html($related);
-            $idx++;
-          }
-        } else {
-          break;
+    foreach ($page->medias()->toStructure() as $m) {
+        if ($f = $m->toFile()) {
+            if($f->notInGrid()->bool()) $hiddenImages++;
         }
     }
 
-    return esc($relatedImages);
+    if ($hiddenImages > 0) {
+        return '+'.$hiddenImages;
+    }
+};
+
+function appendBrick($content, $class, $html) {
+    $brick = null;
+    if ($content) {
+        $brick = Brick('div');
+        $brick->attr('class', $class);
+        $brick->append($content);
+    }
+    if ($brick) $html->append($brick);
+}
+
+file::$methods['formattedDesc'] = function($file) {
+    $page = $file->page();
+    $data = [];
+
+    $data['title'] = $file->imageTitle()->isNotEmpty() ?  $file->imageTitle()->html() : $page->title()->html();
+    $data['subtitle'] = $file->imageSubtitle()->isNotEmpty() ?  $file->imageSubtitle()->html() : $page->subtitle()->html();
+    $data['date'] = $page->date('Y');
+    $data['type'] = $file->imageType()->isNotEmpty() ?  $file->imageType()->html() : $page->type()->html();
+    $data['format'] = $file->imageFormat()->isNotEmpty() ?  $file->imageFormat()->kt() : $page->format()->kt();
+    $data['materials'] = $file->imageMaterials()->isNotEmpty() ?  $file->imageMaterials()->kt() : $page->materials()->kt();
+    $data['text'] = $file->imageText()->isNotEmpty() ?  $file->imageText()->kt() : $page->text()->kt();
+        
+    $html = new Brick('div');
+    $html->attr('class', 'description');
+
+    if ($data['title']) {
+        $brick = Brick('div');
+        $brick->attr('class', 'p-title mb');
+        $brick->append($data['title']);
+        if ($data['subtitle'] != '') $brick->append('<div class="p-subtitle">'.$data['subtitle'].'</div>');
+        $html->append($brick);
+    }
+
+    appendBrick($data['date'], 'p-date mb', $html);
+    appendBrick($data['type'], 'p-type mb', $html);
+    appendBrick($data['format'], 'p-format mb', $html);
+    appendBrick($data['materials'], 'p-materials mb', $html);
+    appendBrick($data['text'], 'p-text mb', $html);
+
+    return $html;
+};
+
+page::$methods['formattedDesc'] = function($page) {
+    $data = [];
+    $html = new Brick('div');
+    $html->attr('class', 'description');
+
+    if ($page->intendedTemplate() == 'entries') {
+
+        $data['entries'] = $page->entries()->toStructure();
+
+        foreach ($data['entries'] as $key => $e) {
+            $brick = new Brick('div');
+            appendBrick($e->title()->html(), 'entry-title', $brick);
+            appendBrick($e->text()->kt(), 'entry-text', $brick);
+            appendBrick($brick, 'entry', $html);
+        }
+
+    } elseif($page->intendedTemplate() == 'project') {
+
+        $data['title'] = $page->title()->html();
+        $data['subtitle'] = $page->subtitle()->html();
+        $data['date'] = $page->date('Y');
+        $data['type'] = $page->type()->html();
+        $data['format'] = $page->format()->kt();
+        $data['materials'] = $page->materials()->kt();
+        $data['text'] = $page->text()->kt();
+
+        if ($data['title']) {
+            $brick = Brick('div');
+            $brick->attr('class', 'p-title mb');
+            $brick->append($data['title']);
+            if ($data['subtitle'] != '') $brick->append('<div class="p-subtitle">'.$data['subtitle'].'</div>');
+            $html->append($brick);
+        }
+
+        appendBrick($data['date'], 'p-date mb', $html);
+        appendBrick($data['type'], 'p-type mb', $html);
+        appendBrick($data['format'], 'p-format mb', $html);
+        appendBrick($data['materials'], 'p-materials mb', $html);
+        appendBrick($data['text'], 'p-text mb', $html);
+    }
+    else {
+
+        $data['text'] = $page->text()->kt();
+
+        appendBrick($data['text'], 'entry', $html);
+    }
+
+    return $html;
 };
 
 kirby()->hook(['panel.page.create', 'panel.page.update'], function($page) {
   if ($page->intendedTemplate() == 'project') {
-  	foreach ($page->files() as $key => $f) {
-  		$f->update(['date' => $page->date()]);
-  	}
-  	try {
-		if ($page->featured()->empty() && $page->medias()->isNotEmpty()) {
-			$page->update(['featured' => $page->medias()->toStructure()->first()->value()]);
-		}
-	} catch(Exception $e) {
-		return response::error($e->getMessage());
-	}
+    foreach ($page->files() as $key => $f) {
+        $f->update(['date' => $page->date()]);
+    }
+    foreach ($page->medias()->toStructure() as $key => $m) {
+        if ($f = $m->toFile()) {
+            $f->update(['sliderIndex' => $key+1]);
+        }
+    }
+    try {
+        if ($page->featured()->empty() && $page->medias()->isNotEmpty()) {
+            $page->update(['featured' => $page->medias()->toStructure()->first()->value()]);
+        }
+    } catch(Exception $e) {
+        return response::error($e->getMessage());
+    }
   }
 });

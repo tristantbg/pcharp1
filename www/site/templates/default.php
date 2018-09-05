@@ -1,9 +1,7 @@
 <?php snippet('header') ?>
 
-  <?php if ($page->text()->isNotEmpty()): ?>
-    <div id="page-text">
-      <?= $page->text()->kt() ?>
-    </div>
-  <?php endif ?>
+<div id="page-panel">
+  <?= $page->formattedDesc() ?>
+</div>
 
 <?php snippet('footer') ?>

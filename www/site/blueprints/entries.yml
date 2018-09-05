@@ -9,8 +9,8 @@ fields:
   title:
     label: Title
     type: title
-  exhibitions:
-    label: Item
+  entries:
+    label: Entries
     type: structure
     style: table
     fields:

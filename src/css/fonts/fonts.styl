@@ -7,6 +7,8 @@ sans-serif()
 
 text()
 	font-family TrumpMedRom, Times New Roman, serif
+	font-size 1.6rem
+	line-height 1.2
 
 // Main font styles
 
@@ -36,13 +38,19 @@ p
 	&:not(:last-child)
 		margin-bottom 1em
 
+#page-panel
+	a
+		color $accent
+		&:hover
+			color $accent
+
 .uppercase
 	text-transform uppercase
 
 .text-center
 	text-align center
 
-nav#menu a, #project-description, #about-description
+nav#menu a, #project-description, .description, #about-description
 	line-height 1.2
 
 #project-medias .caption, #contact, #credits, #right-nav

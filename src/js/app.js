@@ -1,21 +1,76 @@
 /* jshint esversion: 6 */
 
+require('fetch-polyfill')
 import 'babel-polyfill'
 import InfiniteGrid, {
   JustifiedLayout
 } from "@egjs/infinitegrid"
-import Flickity from 'flickity'
+import Headroom from 'headroom.js'
+import throttle from 'lodash.throttle'
+import Flickity from 'flickity-hash'
 import lazysizes from 'lazysizes'
 import optimumx from 'lazysizes'
 require('../../node_modules/lazysizes/plugins/object-fit/ls.object-fit.js')
 require('../../node_modules/lazysizes/plugins/unveilhooks/ls.unveilhooks.js')
 import Barba from 'barba.js'
 
+const htmlDecode = input => {
+  var doc = new DOMParser().parseFromString(input, "text/html");
+  return doc.documentElement.textContent;
+}
+
+const getUrlParams = prop => {
+  var params = {};
+  var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
+  var definitions = search.split('&');
+
+  definitions.forEach(function(val, key) {
+    var parts = val.split('=', 2);
+    params[parts[0]] = parts[1];
+  });
+
+  return (prop && prop in params) ? params[prop] : params;
+}
+
+const simulateClick = elem => {
+  // Create our event (with options)
+  var evt = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  });
+  // If cancelled, don't dispatch our event
+  var canceled = !elem.dispatchEvent(evt);
+};
+
+const isInViewport = elem => {
+  var bounding = elem.getBoundingClientRect();
+  return (
+    bounding.top >= (window.innerHeight || document.documentElement.clientHeight) / 4 &&
+    bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+  );
+};
+
 const App = {
+  root: window.location.origin == 'http://localhost:8888' ? '/pierrecharpin/www/' : '/',
   init: () => {
+    App.stickyHeader()
     App.interact.init()
+    Pjax.init()
     document.getElementById("loader").style.display = "none"
 
+  },
+  sizeSet: () => {
+    App.width = (window.innerWidth || document.documentElement.clientWidth);
+    App.height = (window.innerHeight || document.documentElement.clientHeight);
+    if (App.width <= 767)
+      App.isMobile = true;
+    if (App.isMobile) {
+      if (App.width > 767) {
+        // location.reload();
+        App.isMobile = false;
+      }
+    }
   },
   intro: () => {
     const introHide = () => {
@@ -31,12 +86,41 @@ const App = {
       intro.addEventListener("click", introHide);
     }
   },
+  stickyHeader: () => {
+    App.menu = document.getElementById("menu")
+    App.headroom = new Headroom(App.menu, {
+      offset: 0,
+      // tolerance: {
+      //   up: 5,
+      //   down: 30
+      // },
+      classes: {
+        initial: "sticky",
+        pinned: "sticky--pinned",
+        unpinned: "sticky--unpinned",
+        top: "sticky--top",
+        notTop: "sticky--not-top",
+        bottom: "sticky--bottom",
+        notBottom: "sticky--not-bottom"
+      },
+      onUnpin: function() {
+
+      },
+      onTop: function() {
+
+      }
+    })
+    setTimeout(function() {
+      App.headroom.init()
+    }, 1000);
+  },
   interact: {
     init: () => {
       Grid.init()
       App.interact.embedKirby()
       App.interact.linkTargets()
       Sliders.init()
+      Lightbox.init()
     },
     linkTargets: () => {
       const links = document.querySelectorAll("a");
@@ -71,13 +155,40 @@ const App = {
 const Grid = {
   mediasContainer: null,
   medias: null,
-
+  mediasData: null,
   init: () => {
     Grid.mediasContainer = document.getElementById('medias')
-    Grid.medias = document.getElementsByClassName('media')
-    if(Grid.mediasContainer) Grid.render()
+    Grid.medias = document.querySelectorAll('.media')
+    if (Grid.mediasContainer) Grid.render()
+    Grid.getData()
+  },
+  getData: () => {
+    if (Grid.mediasData) return
+    const fetchOptions = {
+      method: 'GET',
+      mode: 'no-cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }
+    fetch(window.location.origin + App.root + 'api/v1/works', fetchOptions)
+      .then(response => {
+        response.json().then(function(data) {
+          Grid.mediasData = data
+          // if (Lightbox.opened && Lightbox.slider.selectedElement) {
+          //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+          // }
+        })
+      })
+
+
   },
   render: () => {
+    if (Grid.medias.length == 0) Grid.show()
+    Grid.description.element = document.getElementById('media-description')
+    Grid.timeline.element = document.getElementById('timeline-date')
+
     Grid.element = new InfiniteGrid('#medias', {
       itemSelector: 'visible',
       horizontal: false,
@@ -85,36 +196,63 @@ const Grid = {
 
     Grid.element.setLayout(JustifiedLayout, {
       minSize: App.isMobile ? 50 : 150,
-      maxSize: 200,
+      maxSize: 250,
       margin: 0
     })
     Grid.element.on('layoutComplete', Grid.show)
 
     Grid.element.layout()
-
+    Grid.interact()
+  },
+  timeline: {
+    element: null,
+    check: () => {
+      for (var i = 0; i < Grid.medias.length; i++) {
+        const element = Grid.medias[i]
+        if (isInViewport(element)) {
+          if (element.dataset.date != '') Grid.timeline.element.innerHTML = '<div class="inner">' + element.dataset.date + '</div>'
+          Grid.timeline.element.classList.add('visible')
+          window.clearTimeout(Grid.timeline.timeout)
+          Grid.timeline.timeout = setTimeout(Grid.timeline.hide, 1000)
+          break
+        }
+      }
+    },
+    hide: () => {
+      Grid.timeline.element.classList.remove('visible')
+    }
+  },
+  interact: () => {
+    Grid.medias.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        Grid.description.show(element)
+      })
+      element.addEventListener('mouseleave', () => {
+        Grid.description.clear()
+      })
+    });
+    window.addEventListener('scroll', throttle(Grid.timeline.check, 300), false)
+  },
+  description: {
+    show: element => {
+      if (Grid.mediasData && element.dataset.id && Grid.mediasData[element.dataset.id]) {
+        Grid.description.element.innerHTML = htmlDecode(Grid.mediasData[element.dataset.id].formattedText)
+      }
+    },
+    showById: id => {
+      if (Grid.mediasData && Grid.mediasData[id]) {
+        Grid.description.element.innerHTML = htmlDecode(Grid.mediasData[id].formattedText)
+      }
+    },
+    clear: () => {
+      Grid.description.element.innerHTML = ''
+    }
   },
   show: () => {
     Grid.mediasContainer.style.opacity = 1
   },
   hide: () => {
     Grid.mediasContainer.style.opacity = 0
-  },
-  random: () => {
-    Grid.rebuild(true)
-  },
-  next: () => {
-    const current = document.querySelector('.media.active')
-    if (current) {
-      const next = nextVisible(current)
-      if (next) Grid.selectMedia(next)
-    }
-  },
-  previous: () => {
-    const current = document.querySelector('.media.active')
-    if (current) {
-      const previous = previousVisible(current)
-      if (previous) Grid.selectMedia(previous)
-    }
   },
   close: () => {
     const current = document.querySelector('.media.active')
@@ -213,6 +351,200 @@ const Sliders = {
   }
 }
 
+const Lightbox = {
+  init: () => {
+    Lightbox.element = document.getElementById('lightbox');
+    if (Lightbox.element) {
+      Lightbox.flickity(Lightbox.element, {
+        cellSelector: '.slide',
+        imagesLoaded: true,
+        hash: true,
+        lazyLoad: 1,
+        cellAlign: 'left',
+        setGallerySize: App.isMobile,
+        adaptiveHeight: App.isMobile,
+        wrapAround: true,
+        prevNextButtons: true,
+        pageDots: false,
+        draggable: true,
+        arrowShape: {
+          x0: 10,
+          x1: 60,
+          y1: 50,
+          x2: 70,
+          y2: 50,
+          x3: 20
+        },
+        // arrowShape: 'M74.3 99.3L25 50 74.3.7l.7.8L26.5 50 75 98.5z'
+      });
+      Lightbox.accessibility()
+      if (window.location.hash !== '') {
+        // Lightbox.slider.select(window.location.hash)
+        Lightbox.open()
+      }
+      const params = getUrlParams()
+      if (params.slide) {
+        Lightbox.slider.selectCell('#'+params.slide)
+        console.log(params.slide)
+        window.history.replaceState(null, null, window.location.href.replace(window.location.search,''));
+        Lightbox.open()
+      }
+    }
+  },
+  flickity: (element, options) => {
+    if (Lightbox.slider) Lightbox.slider.destroy()
+    Lightbox.slider = new Flickity(element, options);
+    if (Lightbox.slider.slides.length < 1) return; // Stop if no slides
+    if (Lightbox.slider.slides.length == 1) {
+      Lightbox.open()
+      Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
+        Lightbox.nextProject()
+      })
+      const prev = Lightbox.element.querySelector('.flickity-button.previous')
+      prev.removeAttribute('disabled')
+      prev.addEventListener('click', () => {
+        Lightbox.previousProject()
+      })
+      const next = Lightbox.element.querySelector('.flickity-button.next')
+      next.removeAttribute('disabled')
+      next.addEventListener('click', () => {
+        Lightbox.nextProject()
+      })
+    }
+    Lightbox.slider.on('change', function() {
+      Lightbox.checkLastCell()
+      Lightbox.lastCell = Lightbox.slider.selectedIndex
+      if (this.selectedElement) {
+        const caption = this.element.parentNode.querySelector('.caption');
+        if (caption)
+          caption.innerHTML = this.selectedElement.getAttribute('data-caption');
+        Grid.description.showById(this.selectedElement.dataset.id)
+      }
+      const adjCellElems = this.getAdjacentCellElements(1);
+      for (let i = 0; i < adjCellElems.length; i++) {
+        const adjCellImgs = adjCellElems[i].querySelectorAll('.lazy:not(.lazyloaded):not(.lazyload)')
+        for (let j = 0; j < adjCellImgs.length; j++) {
+          adjCellImgs[j].classList.add('lazyload')
+        }
+      }
+    })
+    Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
+      if (!cellElement || !Modernizr.touchevents) {
+        return;
+      } else {
+        this.next();
+      }
+    });
+    if (Lightbox.opened && Lightbox.slider.selectedElement) {
+      const caption = Lightbox.element.querySelector('.caption');
+      if (caption)
+        caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
+      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+    }
+    Lightbox.lastCell = null
+  },
+  checkLastCell: () => {
+    // function seen(element) {
+    //   return element.seen === true;
+    // }
+    // const isLast = Lightbox.slider.cells.every(seen)
+    // return isLast;
+    if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
+      Lightbox.previousProject()
+      console.log('prev')
+    } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
+      Lightbox.nextProject()
+      console.log('next')
+    }
+  },
+  accessibility: () => {
+    document.onkeydown = function(e) {
+      switch (e.keyCode) {
+        // case 37:
+        //   // left
+        //   break;
+        // case 39:
+        //   // right
+        //   break;
+        case 27:
+          Lightbox.close()
+          break;
+        default:
+          return;
+      }
+    };
+    const prevNext = Lightbox.element.getElementsByClassName('flickity-prev-next-button')
+    for (var i = 0; i < prevNext.length; i++) {
+      const elem = prevNext[i]
+      elem.addEventListener('mousemove', event => {
+        var svg = elem.querySelector("svg")
+        var parentOffset = elem.getBoundingClientRect()
+        svg.style.opacity = 1
+        svg.style.top = event.pageY - parentOffset.top - pageYOffset + "px"
+        svg.style.left = event.pageX - parentOffset.left + "px"
+
+      })
+    }
+
+    const toggles = document.querySelectorAll('[event-target=lightbox]')
+    for (let i = 0; i < toggles.length; i++) {
+      toggles[i].addEventListener('click', () => {
+        Lightbox.open()
+        Lightbox.slider.selectCell(toggles[i].getAttribute('href'))
+      })
+    }
+    // const arrowLeft = document.querySelectorAll('[event-target=lightbox-previous]')
+    // for (let i = 0; i < arrowLeft.length; i++) {
+    //   arrowLeft[i].addEventListener('click', () => {
+    //     Lightbox.previous()
+    //   })
+    // }
+    // const arrowRight = document.querySelectorAll('[event-target=lightbox-next]')
+    // for (let i = 0; i < arrowRight.length; i++) {
+    //   arrowRight[i].addEventListener('click', () => {
+    //     Lightbox.next()
+    //   })
+    // }
+    const close = document.querySelectorAll('[event-target=lightbox-close]')
+    for (let i = 0; i < close.length; i++) {
+      close[i].addEventListener('click', () => {
+        Lightbox.close()
+      })
+    }
+  },
+  nextProject: () => {
+    const next = document.getElementById('next-project-link')
+    if (next) {
+      document.getElementById('page-content').style.display = 'none'
+      simulateClick(next)
+    }
+  },
+  previousProject: () => {
+    const previous = document.getElementById('previous-project-link')
+    if (previous) {
+      document.getElementById('page-content').style.display = 'none'
+      simulateClick(previous)
+    }
+  },
+  next: () => {
+    Lightbox.slider.next()
+  },
+  previous: () => {
+    Lightbox.slider.previous()
+  },
+  open: () => {
+    document.body.classList.add('lightbox-on')
+    Lightbox.slider.element.focus()
+    Lightbox.opened = true
+  },
+  close: () => {
+    document.body.classList.remove('lightbox-on')
+    window.location.hash = '/'
+    // Grid.description.clear()
+    Lightbox.opened = false
+  }
+}
+
 const Pjax = {
   titleTransition: 0.7,
   init: function() {
@@ -242,8 +574,6 @@ const Pjax = {
     },
     startTransition: function() {
       document.body.classList.add('is-loading')
-      document.body.classList.remove('player-playing', 'infos-panel', 'about-panel', 'product-opened')
-      Amplitude.pause()
 
       let _this = this
       const newContent = _this.newContainer.querySelector('#page-content')
@@ -253,6 +583,7 @@ const Pjax = {
       // if (App.linkClicked) App.linkClicked.classList.add('active')
 
       App.nextPageType = newContent.getAttribute('page-type')
+      if (App.nextPageType == 'projects') document.body.classList.remove('lightbox-on')
 
       if (App.pageType == 'ok') {
 
@@ -264,7 +595,6 @@ const Pjax = {
     },
     endTransition: function(_this, newContent) {
       window.scroll(0, 0)
-      resizeWindow()
 
       if (App.nextPageType == 'ok') {
 

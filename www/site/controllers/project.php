@@ -1,11 +1,17 @@
 <?php
 
 return function ($site, $pages, $page) {
-	$projects = $site->index()->filterBy('intendedTemplate', 'project')->visible();
+	
+	$medias = new Collection();
+
+	foreach ($page->medias()->toStructure() as $m) {
+		if ($f = $m->toFile()) {
+			$medias->data[] = $f;
+		}
+	}
 
 	return array(
-	 'medias' => $page->medias()->toStructure(),
-	 'projects' => $projects,
+	 'medias' => $medias
 	);
 }
 

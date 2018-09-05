@@ -1,17 +1,44 @@
 nav#menu
-	a
-		display block
-		// line-height 1.2
-		&.project
-			// background yellow
-			margin-bottom 1em
-			margin-top -1em
-			&:first-child
-				margin-top 1em
+	position fixed
+	top 0
+	left 0
+	width 100%
+	background $primary
+	z-index 99
+	box-shadow 0 1px $secondary
+	padding $padding 60% 0 (1rem + $padding*3)
+	& > a
+		span(1/4)
+		margin-bottom $padding
+	&.sticky
+		position fixed
+		top 0
+		left 0
+		transition transform 400ms ease
+	&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover), &.sticky--force-unpinned:not(:hover):not(.sticky--top)
+		transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 
 header
-	padding $space
-	position fixed
+	#site-title
+		position fixed
+		top 0
+		left 0
+		height 100%
+		width (1rem + $padding*2)
+		background $primary
+		box-shadow 1px 0 $secondary
+		z-index 100
+		& > *
+			position absolute
+			top 0
+			right (1rem + $padding*2)
+			transform-origin top right
+			transform rotate(-90deg)
+			white-space nowrap
+			padding $padding
+		&:hover
+			background $accent
+			color $primary
 
 
 

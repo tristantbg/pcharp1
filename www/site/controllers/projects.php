@@ -43,7 +43,7 @@ return function ($site, $pages, $page) {
 			$resultsInProjectsMedias->data[] = $m;
 		}
 
-		$results = $resultsInProjectsMedias->sortBy('date', 'desc');
+		$results = $resultsInProjectsMedias;
 
 	} else {
 		$results = $allMediasSelection;
@@ -53,6 +53,7 @@ return function ($site, $pages, $page) {
 		'projects' => $projects,
 		'allMedias' => $allMedias,
 		'results' => $results,
+		'query' => $query,
 	);
 }
 

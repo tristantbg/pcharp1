@@ -1,3 +1,40 @@
-[page-content=project]
-	// 
+#project-description, .project-description
+	padding $padding
+	.mb:not(:last-child)
+		margin-bottom 1em
+	#media-description
+		&:empty
+			display none
+		&:not(:empty) + #default-description
+			display none
+	#default-description
+		&:empty
+			display none
+
+[page-type=project]
+	#page-content
+		position relative
+	#overview-link
+		position absolute
+		bottom 0
+		left 0
+		width 100%
+		height (1rem + 2*$padding)
+		background $primary
+		padding $padding
+		border-top 1px solid $secondary
+		z-index 98
+		svg
+			display block
+			align()
+			left $descriptionWidth
+			height 2rem
+			width 2rem
+			path
+				fill currentColor
+		&::after
+			content 'Overview'
+		&:hover
+			background $accent
+			color $primary 
 
