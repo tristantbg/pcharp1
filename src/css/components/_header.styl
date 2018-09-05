@@ -6,10 +6,15 @@ nav#menu
 	background $primary
 	z-index 99
 	box-shadow 0 1px $secondary
-	padding $padding 60% 0 (1rem + $padding*3)
+	padding 0 0 0 (1rem + $padding*3)
 	& > a
-		span(1/4)
-		margin-bottom $padding
+		display block
+		float left
+		padding $padding 0
+		&:not(:last-child)
+			margin-right 2.3rem
+		&:hover
+			color $accent
 	&.sticky
 		position fixed
 		top 0

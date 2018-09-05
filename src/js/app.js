@@ -112,7 +112,7 @@ const App = {
     })
     setTimeout(function() {
       App.headroom.init()
-    }, 1000);
+    }, 5000);
   },
   interact: {
     init: () => {
