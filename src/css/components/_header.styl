@@ -27,13 +27,13 @@ nav#menu
 			width 100%
 			bottom (-2*$padding)
 			left 0
-	&.sticky--pinned
+	&.sticky--pinned:not(.sticky--top)
 		&::after
 			visibility hidden
 	&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover), &.sticky--force-unpinned:not(:hover):not(.sticky--top)
 		// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 		transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
-		
+
 
 // #medias, #project-description
 // 	transition transform 400ms ease

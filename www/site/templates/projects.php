@@ -26,15 +26,15 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 			?>
 			<?php if ($media->type() == 'image'): ?>
 				<a
-				class="media visible" 
+				class="media visible"
 				<?php if ($query): ?>
-				href="<?= $project->url().'?slide=img-'.$media->sliderIndex() ?>" 
+				href="<?= $project->url().'?slide=img-'.$media->sliderIndex() ?>"
 				<?php else: ?>
-				href="<?= $project->url() ?>" 
+				href="<?= $project->url() ?>"
 				<?php endif ?>
-				data-id="<?= $media->uniqueId() ?>" 
-				data-page-id="<?= $project->uid() ?>" 
-				data-date="<?= $project->date('Y') ?>" 
+				data-id="<?= $media->uniqueId() ?>"
+				data-page-id="<?= $project->uid() ?>"
+				data-date="<?= $project->date('Y') ?>"
 				style="width: <?= $media->width() ?>px; height: <?= $media->height() ?>px"
 				>
 					<div class="inner">
@@ -48,7 +48,7 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 						data-srcset="<?= $srcset ?>"
 						data-sizes="auto"
 						data-optimumx="1.5"
-						width="100%" 
+						width="100%"
 						height="100%" />
 						<div class="bullet"></div>
 						<?php if (!$query): ?>
@@ -72,5 +72,6 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 	<div class="inner"></div>
 </div>
 
+<div id="page-panel"></div>
 
 <?php snippet('footer') ?>

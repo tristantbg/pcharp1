@@ -8,13 +8,16 @@ fields:
     label: Title
     type: text
   text:
-    label: Description
-    type: textarea
-  contact:
-    label: Contact
-    type: textarea
-    width: 1/2
-  credits:
-    label: Credits
-    type: textarea
-    width: 1/2
+    label: English
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
+      - email
+  textFr:
+    label: Français
+    type: simplemde
+    buttons:
+      - link
+      - pagelink
+      - email

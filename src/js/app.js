@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-require('fetch-polyfill')
+import 'whatwg-fetch'
 import 'babel-polyfill'
 import InfiniteGrid, {
   JustifiedLayout
@@ -63,6 +63,8 @@ const App = {
   init: () => {
     App.stickyHeader()
     App.interact.init()
+    Panel.menuTargets()
+    Panel.interact()
     Pjax.init()
     document.getElementById("loader").style.display = "none"
 
@@ -130,9 +132,10 @@ const App = {
   interact: {
     init: () => {
       Grid.init()
+      Lightbox.init()
       App.interact.embedKirby()
       App.interact.linkTargets()
-      Lightbox.init()
+      Panel.init()
     },
     linkTargets: () => {
       const links = document.querySelectorAll("a");
@@ -140,6 +143,7 @@ const App = {
         const element = links[i];
         if (element.host !== window.location.host) {
           element.setAttribute('target', '_blank');
+          element.setAttribute('rel', 'noopener');
         } else {
           element.setAttribute('target', '_self');
         }
@@ -219,6 +223,7 @@ const Grid = {
   timeline: {
     element: null,
     check: () => {
+      if (Grid.timeline.element) {
       for (var i = 0; i < Grid.medias.length; i++) {
         const element = Grid.medias[i]
         if (isInViewport(element)) {
@@ -229,9 +234,10 @@ const Grid = {
           break
         }
       }
+      }
     },
     hide: () => {
-      Grid.timeline.element.classList.remove('visible')
+      if(Grid.timeline.element) Grid.timeline.element.classList.remove('visible')
     }
   },
   interact: () => {
@@ -363,6 +369,75 @@ const Grid = {
 //   }
 // }
 
+const Panel = {
+  isVisible: false,
+  init: () => {
+    Panel.element = document.getElementById('page-panel')
+    if (!Panel.element) return
+    Panel.isVisible = Panel.element.classList.contains('visible')
+    Panel.interact()
+  },
+  menuTargets: () => {
+    const menuTargets = document.querySelectorAll('[event-target=page]')
+    menuTargets.forEach(elem => {
+      elem.addEventListener('click', e => {
+        e.preventDefault()
+        const href = e.currentTarget.href
+        fetch(href)
+        .then(function(response) {
+          return response.text()
+        }).then(function(body) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(body, "text/html");
+          const texts = doc.querySelector('#page-panel')
+          if (texts) {
+            history.replaceState(null, doc.title, href)
+            document.title = doc.title
+            Panel.insertText(texts.innerHTML)
+          }
+        })
+      })
+    })
+    document.getElementById('site-title').addEventListener('click', Panel.close)
+  },
+  interact: () => {
+    App.interact.linkTargets()
+    const langSwitch = Panel.element.querySelector('[event-target=lang-switch]')
+    if(langSwitch) langSwitch.addEventListener('click', Panel.toggleLanguage)
+    const texts = document.querySelectorAll('[event-target=text]')
+    texts.forEach(t => {
+      t.addEventListener('click', () => {
+        const texts = document.getElementById('project-texts')
+        if (texts) Panel.insertText(texts.innerHTML)
+      })
+    })
+  },
+  toggleLanguage: e => {
+    const container = e.currentTarget.parentNode
+    if(container.getAttribute('lang') == 'en') {
+      container.setAttribute('lang', 'fr')
+    } else if(container.getAttribute('lang') == 'fr') {
+      container.setAttribute('lang', 'en')
+    }
+  },
+  open: () => {
+    Panel.element.classList.add('visible')
+    Panel.isVisible = true
+  },
+  close: () => {
+    Panel.element.classList.remove('visible')
+    Panel.isVisible = false
+  },
+  insertText: text => {
+    if(Panel.element) {
+      Panel.element.innerHTML = text
+      Panel.element.scroll(0,0)
+      Panel.interact()
+      Panel.open()
+    }
+  }
+}
+
 const Lightbox = {
   init: () => {
     Lightbox.element = document.getElementById('lightbox');
@@ -397,7 +472,6 @@ const Lightbox = {
       const params = getUrlParams()
       if (params.slide) {
         Lightbox.slider.selectCell('#'+params.slide)
-        console.log(params.slide)
         window.history.replaceState(null, null, window.location.href.replace(window.location.search,''));
         Lightbox.open()
       }
@@ -464,10 +538,10 @@ const Lightbox = {
     // return isLast;
     if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
       Lightbox.previousProject()
-      console.log('prev')
+      // console.log('prev')
     } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
       Lightbox.nextProject()
-      console.log('next')
+      // console.log('next')
     }
   },
   accessibility: () => {
@@ -583,7 +657,14 @@ const Pjax = {
   hideShowTransition: Barba.BaseTransition.extend({
     start: function() {
       let _this = this
-      _this.newContainerLoading.then(_this.startTransition.bind(_this))
+      if (Panel.isVisible) {
+        Panel.close()
+        setTimeout(function() {
+          _this.newContainerLoading.then(_this.startTransition.bind(_this))
+        }, 300);
+      } else {
+        _this.newContainerLoading.then(_this.startTransition.bind(_this))
+      }
     },
     startTransition: function() {
       document.body.classList.add('is-loading')

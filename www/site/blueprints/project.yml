@@ -88,16 +88,16 @@ fields:
     label: Title
     type: title
     width: 1/2
+  featured:
+    label: Featured image
+    type: image
+    width: 1/4
   date:
     label: Year
     type: date
     format: YYYY
     default: today
     required: true
-    width: 1/4
-  featured:
-    label: Featured image
-    type: image
     width: 1/4
   subtitle:
     label: Subtitle
@@ -106,7 +106,12 @@ fields:
   type:
     label: Type
     type: text
-    width: 1/2
+    width: 1/4
+  dateEnd:
+    label: Year End
+    type: date
+    format: YYYY
+    width: 1/4
   format:
     label: Format
     type: simplemde
@@ -134,15 +139,15 @@ fields:
   tab2:
     label: Texts
     type: tabs
-  textFr :
-    label: Français
+  textEn :
+    label: English
     type: simplemde
     buttons:
       - link
       - pagelink
       - email
-  textEn :
-    label: English
+  textFr :
+    label: Français
     type: simplemde
     buttons:
       - link

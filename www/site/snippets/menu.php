@@ -10,7 +10,11 @@
 
 	<nav id="menu">
 		<?php foreach ($pages->visible()->not($site->homepage()) as $key => $item): ?>
-		<a class="no-barba<?php e($item->is($page),' active') ?>" href="<?= $item->url() ?>"><?= $item->title()->html() ?></a>
+      <?php if ($item->intendedTemplate() == 'search'): ?>
+		    <a class="no-barba" href="<?= $item->url() ?>"><?= $item->title()->html() ?></a>
+      <?php else: ?>
+        <a class="no-barba" href="<?= $item->url() ?>" event-target="page"><?= $item->title()->html() ?></a>
+      <?php endif ?>
 		<?php endforeach ?>
 	</nav>
 </header>

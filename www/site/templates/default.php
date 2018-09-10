@@ -1,6 +1,6 @@
 <?php snippet('header') ?>
 
-<div id="page-panel">
+<div id="page-panel" class="visible">
   <?= $page->formattedDesc() ?>
 </div>
 
