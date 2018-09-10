@@ -7,6 +7,7 @@ import InfiniteGrid, {
 } from "@egjs/infinitegrid"
 import Headroom from 'headroom.js'
 import throttle from 'lodash.throttle'
+import debounce from 'lodash.debounce'
 import Flickity from 'flickity-hash'
 import lazysizes from 'lazysizes'
 import optimumx from 'lazysizes'
@@ -30,6 +31,12 @@ const getUrlParams = prop => {
   });
 
   return (prop && prop in params) ? params[prop] : params;
+}
+
+const resizeWindow = () => {
+  var event = document.createEvent('HTMLEvents');
+  event.initEvent('resize', true, false);
+  window.dispatchEvent(event);
 }
 
 const simulateClick = elem => {
@@ -104,25 +111,27 @@ const App = {
         notBottom: "sticky--not-bottom"
       },
       onUnpin: function() {
-        document.body.classList.remove('sticky--menu')
+        // document.body.classList.remove('sticky--menu')
       },
       onPin: function() {
-        document.body.classList.add('sticky--menu')
+        // document.body.classList.add('sticky--menu')
       },
       onTop: function() {
+        document.body.classList.add('sticky--menu')
+      },
+      onNotTop: function() {
         document.body.classList.remove('sticky--menu')
       }
     })
     setTimeout(function() {
       App.headroom.init()
-    }, 5000);
+    }, 3000);
   },
   interact: {
     init: () => {
       Grid.init()
       App.interact.embedKirby()
       App.interact.linkTargets()
-      Sliders.init()
       Lightbox.init()
     },
     linkTargets: () => {
@@ -234,7 +243,7 @@ const Grid = {
         Grid.description.clear()
       })
     });
-    window.addEventListener('scroll', throttle(Grid.timeline.check, 300), false)
+    window.addEventListener('scroll', debounce(Grid.timeline.check, 300), false)
   },
   description: {
     show: element => {
@@ -276,83 +285,83 @@ const Grid = {
   }
 }
 
-const Sliders = {
-  flickitys: [],
-  init: () => {
-    Sliders.elements = document.getElementsByClassName('slider');
-    if (Sliders.elements.length > 0) {
-      for (var i = 0; i < Sliders.elements.length; i++) {
-        Sliders.flickity(Sliders.elements[i], {
-          cellSelector: '.slide',
-          imagesLoaded: true,
-          lazyLoad: 1,
-          cellAlign: 'left',
-          setGallerySize: App.isMobile,
-          adaptiveHeight: App.isMobile,
-          wrapAround: true,
-          prevNextButtons: true,
-          pageDots: false,
-          draggable: App.isMobile ? '>1' : false,
-          arrowShape: 'M29.7 77.4l4.8-3.7L10 41.8h90v-6.1H10.1L34.5 4.6 29.7.9 0 38.7z'
-        });
-      }
-      Sliders.accessibility()
-    }
-  },
-  flickity: (element, options) => {
-    Sliders.slider = new Flickity(element, options);
-    Sliders.flickitys.push(Sliders.slider);
-    if (Sliders.slider.slides.length < 1) return; // Stop if no slides
+// const Sliders = {
+//   flickitys: [],
+//   init: () => {
+//     Sliders.elements = document.getElementsByClassName('slider');
+//     if (Sliders.elements.length > 0) {
+//       for (var i = 0; i < Sliders.elements.length; i++) {
+//         Sliders.flickity(Sliders.elements[i], {
+//           cellSelector: '.slide',
+//           imagesLoaded: true,
+//           lazyLoad: 1,
+//           cellAlign: 'left',
+//           setGallerySize: App.isMobile,
+//           adaptiveHeight: App.isMobile,
+//           wrapAround: true,
+//           prevNextButtons: true,
+//           pageDots: false,
+//           draggable: App.isMobile ? '>1' : false,
+//           arrowShape: 'M29.7 77.4l4.8-3.7L10 41.8h90v-6.1H10.1L34.5 4.6 29.7.9 0 38.7z'
+//         });
+//       }
+//       Sliders.accessibility()
+//     }
+//   },
+//   flickity: (element, options) => {
+//     Sliders.slider = new Flickity(element, options);
+//     Sliders.flickitys.push(Sliders.slider);
+//     if (Sliders.slider.slides.length < 1) return; // Stop if no slides
 
-    Sliders.slider.on('change', function() {
-      if (this.selectedElement) {
-        const caption = this.element.parentNode.querySelector('.caption');
-        if (caption)
-          caption.innerHTML = this.selectedElement.getAttribute('data-caption');
-        const number = this.element.parentNode.querySelector('.slide-number');
-        if (number)
-          number.innerHTML = (this.selectedIndex + 1) + '/' + this.slides.length;
-      }
-      const adjCellElems = this.getAdjacentCellElements(1);
-      for (let i = 0; i < adjCellElems.length; i++) {
-        const adjCellImgs = adjCellElems[i].querySelectorAll('.lazy:not(.lazyloaded):not(.lazyload)')
-        for (let j = 0; j < adjCellImgs.length; j++) {
-          adjCellImgs[j].classList.add('lazyload')
-        }
-      }
-    });
-    Sliders.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
-      if (!cellElement) {
-        return;
-      } else {
-        this.next();
-      }
-    });
-    if (Sliders.slider.selectedElement) {
-      const caption = Sliders.slider.element.querySelector('.caption');
-      if (caption)
-        caption.innerHTML = Sliders.slider.selectedElement.getAttribute('data-caption');
-      const number = Sliders.slider.element.parentNode.querySelector('.slide-number');
-      if (number)
-        number.innerHTML = (Sliders.slider.selectedIndex + 1) + '/' + Sliders.slider.slides.length;
-    }
-  },
-  accessibility: () => {
-    const prevNext = document.getElementsByClassName('flickity-prev-next-button')
+//     Sliders.slider.on('change', function() {
+//       if (this.selectedElement) {
+//         const caption = this.element.parentNode.querySelector('.caption');
+//         if (caption)
+//           caption.innerHTML = this.selectedElement.getAttribute('data-caption');
+//         const number = this.element.parentNode.querySelector('.slide-number');
+//         if (number)
+//           number.innerHTML = (this.selectedIndex + 1) + '/' + this.slides.length;
+//       }
+//       const adjCellElems = this.getAdjacentCellElements(1);
+//       for (let i = 0; i < adjCellElems.length; i++) {
+//         const adjCellImgs = adjCellElems[i].querySelectorAll('.lazy:not(.lazyloaded):not(.lazyload)')
+//         for (let j = 0; j < adjCellImgs.length; j++) {
+//           adjCellImgs[j].classList.add('lazyload')
+//         }
+//       }
+//     });
+//     Sliders.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
+//       if (!cellElement) {
+//         return;
+//       } else {
+//         this.next();
+//       }
+//     });
+//     if (Sliders.slider.selectedElement) {
+//       const caption = Sliders.slider.element.querySelector('.caption');
+//       if (caption)
+//         caption.innerHTML = Sliders.slider.selectedElement.getAttribute('data-caption');
+//       const number = Sliders.slider.element.parentNode.querySelector('.slide-number');
+//       if (number)
+//         number.innerHTML = (Sliders.slider.selectedIndex + 1) + '/' + Sliders.slider.slides.length;
+//     }
+//   },
+//   accessibility: () => {
+//     const prevNext = document.getElementsByClassName('flickity-prev-next-button')
 
-    for (var i = 0; i < prevNext.length; i++) {
-      const elem = prevNext[i]
-      elem.addEventListener('mousemove', event => {
-        var svg = elem.querySelector("svg");
-        var parentOffset = elem.getBoundingClientRect();
-        svg.style.top = event.pageY - parentOffset.top - pageYOffset + "px";
-        svg.style.left = event.pageX - parentOffset.left + "px";
+//     for (var i = 0; i < prevNext.length; i++) {
+//       const elem = prevNext[i]
+//       elem.addEventListener('mousemove', event => {
+//         var svg = elem.querySelector("svg");
+//         var parentOffset = elem.getBoundingClientRect();
+//         svg.style.top = event.pageY - parentOffset.top - pageYOffset + "px";
+//         svg.style.left = event.pageX - parentOffset.left + "px";
 
-      })
-    }
+//       })
+//     }
 
-  }
-}
+//   }
+// }
 
 const Lightbox = {
   init: () => {
@@ -370,15 +379,15 @@ const Lightbox = {
         prevNextButtons: true,
         pageDots: false,
         draggable: true,
-        arrowShape: {
-          x0: 10,
-          x1: 60,
-          y1: 50,
-          x2: 70,
-          y2: 50,
-          x3: 20
-        },
-        // arrowShape: 'M74.3 99.3L25 50 74.3.7l.7.8L26.5 50 75 98.5z'
+        // arrowShape: {
+        //   x0: 10,
+        //   x1: 60,
+        //   y1: 50,
+        //   x2: 70,
+        //   y2: 50,
+        //   x3: 20
+        // },
+        arrowShape: 'M73.9 100l-50-50 50-50 2.2 2.1L28.2 50l47.9 47.9z'
       });
       Lightbox.accessibility()
       if (window.location.hash !== '') {
@@ -430,6 +439,7 @@ const Lightbox = {
           adjCellImgs[j].classList.add('lazyload')
         }
       }
+      resizeWindow()
     })
     Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
       if (!cellElement || !Modernizr.touchevents) {

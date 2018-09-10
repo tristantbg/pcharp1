@@ -3,10 +3,11 @@
 		hideselect()
 		display none
 		width 'calc(100% - %s)' % (1rem + 2*$padding)
-		height 'calc(100vh - %s)' % $padding
+		// height 'calc(100vh - %s)' % $padding
+		height 100vh
 		padding-bottom (1rem + 2*$padding)
 		position fixed
-		top $padding
+		top 0
 		left (1rem + 2*$padding)
 		background $primary
 		z-index 95
@@ -25,7 +26,8 @@
 		.slide
 			width 100%
 			left 0 !important
-			visibility hidden
+			z-index 0
+			opacity 0
 			+above($sm + 1)
 				height 100%
 			.content
@@ -57,7 +59,7 @@
 					mix-blend-mode darken
 					object-position center
 			&.is-selected
-				visibility visible
+				opacity 1
 				z-index 1
 		.flickity-prev-next-button
 			cursor none !important
@@ -78,7 +80,9 @@
 				opacity 0
 				align()
 				width 2rem
-				height 1.4rem
+				height 2rem
+				path
+					fill $secondary
 			&.previous
 				left 0
 			&.next

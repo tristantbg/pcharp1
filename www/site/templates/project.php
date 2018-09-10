@@ -146,7 +146,7 @@
 	<a id="next-project-link" href="<?= $nextUrl ?>"></a>
 	<a id="previous-project-link" href="<?= $prevUrl ?>"></a>
 	<a id="overview-link" href="<?= $site->url() ?>">
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40.8 -32.3 100 100"><path d="M59.2-6.4l-50 50-50-50 1.9-1.9L9.2 39.9 57.3-8.3z"/></svg>
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100 26.1l-50 50-50-50 2.1-2.2L50 71.8l47.9-47.9z"/></svg>
 	</a>
 	
 

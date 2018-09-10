@@ -20,9 +20,27 @@ nav#menu
 		top 0
 		left 0
 		transition transform 400ms ease
+		&::after
+			content ''
+			position absolute
+			height ($padding*2)
+			width 100%
+			bottom (-2*$padding)
+			left 0
+	&.sticky--pinned
+		&::after
+			visibility hidden
 	&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover), &.sticky--force-unpinned:not(:hover):not(.sticky--top)
 		// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 		transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
+		
+
+// #medias, #project-description
+// 	transition transform 400ms ease
+
+// body.sticky--menu:not(.lightbox-on)
+// 	#medias, #project-description
+// 		transform translateY(3rem) translateZ(0)
 
 header
 	#site-title
