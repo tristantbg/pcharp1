@@ -16,7 +16,8 @@ nav#menu
 		left 0
 		transition transform 400ms ease
 	&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover), &.sticky--force-unpinned:not(:hover):not(.sticky--top)
-		transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
+		// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
+		transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
 
 header
 	#site-title

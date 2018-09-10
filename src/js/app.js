@@ -104,10 +104,13 @@ const App = {
         notBottom: "sticky--not-bottom"
       },
       onUnpin: function() {
-
+        document.body.classList.remove('sticky--menu')
+      },
+      onPin: function() {
+        document.body.classList.add('sticky--menu')
       },
       onTop: function() {
-
+        document.body.classList.remove('sticky--menu')
       }
     })
     setTimeout(function() {
