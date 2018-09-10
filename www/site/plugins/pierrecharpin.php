@@ -52,7 +52,7 @@ file::$methods['formattedDesc'] = function($file) {
     $data['format'] = $file->imageFormat()->isNotEmpty() ?  $file->imageFormat()->kt() : $page->format()->kt();
     $data['materials'] = $file->imageMaterials()->isNotEmpty() ?  $file->imageMaterials()->kt() : $page->materials()->kt();
     $data['text'] = $file->imageText()->isNotEmpty() ?  $file->imageText()->kt() : $page->text()->kt();
-        
+
     $html = new Brick('div');
     $html->attr('class', 'description');
 
@@ -125,8 +125,14 @@ page::$methods['formattedDesc'] = function($page) {
 
 kirby()->hook(['panel.page.create', 'panel.page.update'], function($page) {
   if ($page->intendedTemplate() == 'project') {
+    $page->update([
+      'format' => str_replace(' x ', ' × ', $page->format()->value())
+    ]);
     foreach ($page->files() as $key => $f) {
-        $f->update(['date' => $page->date()]);
+        $f->update([
+          'date' => $page->date(),
+          'imageFormat' => str_replace(' x ', ' × ', $f->imageFormat()->value())
+        ]);
     }
     foreach ($page->medias()->toStructure() as $key => $m) {
         if ($f = $m->toFile()) {

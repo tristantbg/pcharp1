@@ -44,6 +44,7 @@
     "fetch-polyfill": "^0.8.2",
     "flickity-hash": "^1.0.3",
     "headroom.js": "^0.9.4",
+    "jump.js": "^1.0.2",
     "lazysizes": "^4.1.1",
     "lodash.throttle": "^4.1.1",
     "viewport-units-buggyfill": "^0.6.2"
