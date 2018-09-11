@@ -33,7 +33,7 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 				href="<?= $project->url() ?>"
 				<?php endif ?>
 				data-id="<?= $media->uniqueId() ?>"
-				data-page-id="<?= $project->uid() ?>"
+				data-project="<?= $project->uid() ?>" 
 				data-date="<?= $project->date('Y') ?>"
 				style="width: <?= $media->width() ?>px; height: <?= $media->height() ?>px"
 				>

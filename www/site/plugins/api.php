@@ -62,6 +62,7 @@ kirby()->routes([
         $data[$m->uniqueId()] = [];
         $data[$m->uniqueId()]['project'] = $m->page()->uid();
         $data[$m->uniqueId()]['formattedText'] = esc($m->formattedDesc());
+        $data[$m->uniqueId()]['overview'] = !$m->notInGrid()->bool();
       }
 
       return response::json($data);
@@ -90,6 +91,7 @@ kirby()->routes([
       foreach ($medias as $m) {
         $data[$m->uniqueId()] = [];
         $data[$m->uniqueId()]['formattedText'] = esc($m->formattedDesc());
+        $data[$m->uniqueId()]['overview'] = !$m->notInGrid()->bool();
       }
 
       return response::json($data);

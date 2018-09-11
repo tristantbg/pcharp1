@@ -2,12 +2,13 @@
 	position fixed
 	// height 'calc(100% - %s)' % $padding
 	height 100%
-	width 49rem
+	// width 49rem
+	width 40rem
 	left (1rem + 2*$padding)
 	top 0
 	background $secondary
 	color $primary
-	padding ($padding*4) $padding $padding
+	padding ($padding*6) $padding $padding
 	overflow scroll
 	transition transform 500ms $kinetic
 	z-index 98
@@ -15,17 +16,27 @@
 		transform translateX(-100%) translateZ(0)
 	p
 		text()
-		max-width 25.85em
+		// max-width 25.85em
 	.entry
 		text()
 		&:not(:last-child)
 			margin-bottom 1em
 		.entry-title
 			padding-left 1.25em
+	[event-target=close-panel]
+		position absolute
+		padding $padding
+		top $padding
+		left 0
+		svg
+			width 2rem
+			height 2rem
+			path
+				fill $primary
 	.text-content
 		[event-target=lang-switch]
 			position absolute
-			top 0
+			top 1.8rem
 			right 0
 			padding $padding
 		.text-fr
