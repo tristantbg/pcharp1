@@ -3,8 +3,6 @@
 		hideselect()
 		// display none
 		width 'calc(100% - %s)' % (1rem + 2*$padding)
-		// height 'calc(100vh - %s)' % $padding
-		height 100vh
 		padding-bottom (1rem + 2*$padding)
 		position fixed
 		top 0
@@ -12,6 +10,15 @@
 		background $primary
 		z-index 95
 		transform translateY(-100%) translateZ(0)
+		+above($md + 1)
+			height 100vh
+		+below($md)
+			height 'calc(100vh - %s)' % ($padding*3)
+			top ($padding*3)
+			left 0
+			width 100%
+			overflow scroll
+			-webkit-overflow-scrolling touch
 		&.loaded
 			transition transform 500ms $kinetic
 		.project-description
@@ -23,6 +30,11 @@
 			border-right 1px solid
 			background $primary
 			cursor auto
+			+below($md)
+				position static
+				width 100%
+				border-right 0
+				border-top 1px solid
 		.flickity-viewport
 			width 100%
 		.flickity-slider
@@ -32,19 +44,26 @@
 			left 0 !important
 			z-index 0
 			opacity 0
-			+above($sm + 1)
+			+above($md + 1)
 				height 100%
 			.content
 				width 100%
-				padding-left $descriptionWidth
-				+above($sm + 1)
+				+above($md + 1)
+					padding-left $descriptionWidth
 					height 100%
 			img, video
 				width 100%
-				border-right 1px solid
-				+above($sm + 1)
+				+above($md + 1)
+					border-right 1px solid
 					width auto
 					height 100%
+				+below($md)
+					display block
+					width auto
+					height auto
+					max-width 100%
+					max-height 100%
+					box-shadow -1px -1px 0 0 $secondary, 1px 1px 0 0 $secondary, -1px 1px 0 0 $secondary, 1px -1px 0 0 $secondary
 			.content.video
 				width 100%
 				.plyr--ready
@@ -52,7 +71,7 @@
 					height 100%
 				video
 					width 100%
-					+above($sm + 1)
+					+above($md + 1)
 						width auto
 						height 100%
 					// object-position top left

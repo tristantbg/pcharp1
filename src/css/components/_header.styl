@@ -7,18 +7,48 @@ nav#menu
 	z-index 99
 	box-shadow 0 1px $secondary
 	padding 0 0 0 (1rem + $padding*3)
-	& > a
+	+below($md)
+		top 3rem
+		padding $padding $padding 0
+		z-index 100
+	#homepage
+		+above($md + 1)
+			display none
+	form
+		label
+			float left
+			cursor pointer
+		input
+			padding 0
+			margin 0
+			font-family inherit
+			letter-spacing inherit
+			border 0
+			caret-color $accent
+			font-size inherit
+			width 0
+			opacity 0
+			color $accent
+			&:focus
+				width auto
+				opacity 1
+				& + label
+					display none
+	& > a, & > form
 		display block
 		float left
 		padding $padding 0
+		+below($md)
+			padding-top 0
 		&:not(:last-child)
 			margin-right 2.3rem
-		&:hover
-			color $accent
+			+below($md)
+				margin-right 1.5rem
+		+above($md + 1)
+			&:hover
+				color $accent
 	&.sticky
 		position fixed
-		top 0
-		left 0
 		transition transform 400ms ease
 		&::after
 			content ''
@@ -30,9 +60,16 @@ nav#menu
 	&.sticky--pinned:not(.sticky--top)
 		&::after
 			visibility hidden
-	&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover), &.sticky--force-unpinned:not(:hover):not(.sticky--top)
-		// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
-		transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
+	+below($md)
+		&.sticky--unpinned, &.sticky--top
+			&:not(.sticky--force-pinned)
+				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
+				transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
+	+above($md + 1)
+		&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover)
+			&:not(.sticky--force-pinned)
+				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
+				transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
 
 
 // #medias, #project-description
@@ -47,22 +84,34 @@ header
 		position fixed
 		top 0
 		left 0
-		height 100%
-		width (1rem + $padding*2)
+		width 100%
 		background $primary
-		box-shadow 1px 0 $secondary
-		z-index 100
+		z-index 101
+		white-space nowrap
+		box-shadow 0 1px 0 $secondary
 		& > *
-			position absolute
-			top 0
-			right (1rem + $padding*2)
-			transform-origin top right
-			transform rotate(-90deg)
-			white-space nowrap
 			padding $padding
-		&:hover
+			&:not(.hidden)
+				display block
+		&.active
 			background $accent
 			color $primary
+		+above($md + 1)
+			z-index 100
+			box-shadow 1px 0 $secondary
+			height 100%
+			width (1rem + $padding*2)
+			& > *
+				position absolute
+				top 0
+				right (1rem + $padding*2)
+				transform-origin top right
+				transform rotate(-90deg)
+				white-space nowrap
+				padding $padding
+			&:hover
+				background $accent
+				color $primary
 
 
 

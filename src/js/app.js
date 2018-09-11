@@ -2,7 +2,9 @@
 
 import 'whatwg-fetch'
 import 'babel-polyfill'
-import InfiniteGrid, { JustifiedLayout } from "@egjs/infinitegrid"
+import InfiniteGrid, {
+  JustifiedLayout
+} from "@egjs/infinitegrid"
 import Headroom from 'headroom.js'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
@@ -67,12 +69,17 @@ const isInViewport = elem => {
 const App = {
   root: window.location.origin == 'http://localhost:8888' ? '/pierrecharpin/www/' : '/',
   init: () => {
+    App.sizeSet()
+    App.siteTitle = document.getElementById('site-title')
+    if (App.isMobile) App.siteTitle.classList.add('no-barba')
     App.stickyHeader()
     App.interact.init()
     Panel.menuTargets()
     Panel.init(true)
     Pjax.init()
-    document.getElementById("loader").style.display = "none"
+    Search.init()
+    window.addEventListener('resize', debounce(App.sizeSet, 200), false)
+    document.getElementById('loader').style.display = "none"
 
   },
   sizeSet: () => {
@@ -86,6 +93,11 @@ const App = {
         App.isMobile = false;
       }
     }
+  },
+  closeMenu: () => {
+    App.menu.classList.add('sticky--unpinned')
+    App.menu.classList.remove('sticky--force-pinned')
+    App.siteTitle.classList.remove('active')
   },
   intro: () => {
     const introHide = () => {
@@ -107,6 +119,7 @@ const App = {
       jump(element, {
         duration: 1200,
         easing: easeInOutExpo,
+        offset: App.isMobile ? -36 : 0,
         callback: () => App.isScrolling = false
       });
     }
@@ -184,6 +197,22 @@ const App = {
   },
 }
 
+const Search = {
+  init: () => {
+    Search.element = document.getElementById('search')
+    if (Search.element) {
+      Search.element.addEventListener('submit', e => {
+        e.preventDefault()
+        Barba.Pjax.goTo(e.target.action + '?q=' + e.target[0].value)
+        App.closeMenu()
+      })
+    }
+  },
+  reset: () => {
+    if (Search.element) Search.element.querySelector('input').value = ''
+  }
+}
+
 const Grid = {
   mediasContainer: null,
   medias: null,
@@ -208,20 +237,19 @@ const Grid = {
       .then(response => {
         response.json().then(function(data) {
           Grid.mediasData = data
-        // if (Lightbox.opened && Lightbox.slider.selectedElement) {
-        //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
-        // }
+          // if (Lightbox.opened && Lightbox.slider.selectedElement) {
+          //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+          // }
         })
       })
-
-
   },
   render: () => {
-    if (Grid.medias.length < 5) {
-      Grid.mediasContainer.classList.add('no-fit')
+    if (!App.isMobile && Grid.medias.length < 5) {
+      if (!App.isMobile) Grid.mediasContainer.classList.add('no-fit')
       Grid.show()
       return
     }
+    if (Grid.medias.length == 0) Grid.show()
     Grid.description.element = document.getElementById('media-description')
     Grid.timeline.element = document.getElementById('timeline-date')
 
@@ -231,7 +259,7 @@ const Grid = {
     })
 
     Grid.element.setLayout(JustifiedLayout, {
-      minSize: App.isMobile ? 50 : 150,
+      minSize: App.isMobile ? 80 : 150,
       maxSize: 250,
       margin: 0
     })
@@ -290,9 +318,7 @@ const Grid = {
   show: () => {
     Grid.mediasContainer.style.opacity = 1
     if (App.pageType == 'projects' && Grid.selectedElement) {
-      console.log(Grid.selectedElement)
       const selectedElement = Grid.mediasContainer.querySelector(Grid.selectedElement)
-      console.log(selectedElement)
       if (selectedElement) App.scrollTo(selectedElement)
     }
   },
@@ -403,6 +429,7 @@ const Panel = {
     if (!Panel.element) return
     if (first) {
       Panel.isVisible = Panel.element.classList.contains('visible')
+      if (Panel.isVisible) document.body.classList.add('page-panel')
       document.addEventListener('keydown', e => {
         switch (e.keyCode) {
           case 27:
@@ -425,19 +452,30 @@ const Panel = {
           .then(function(response) {
             return response.text()
           }).then(function(body) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(body, "text/html");
-          const texts = doc.querySelector('#page-panel')
-          if (texts) {
-            history.replaceState(null, doc.title, href)
-            document.title = doc.title
-            Panel.insertText(texts.innerHTML)
-          }
-        })
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(body, "text/html");
+            const texts = doc.querySelector('#page-panel')
+            if (texts) {
+              history.replaceState(null, doc.title, href)
+              document.title = doc.title
+              Panel.insertText(texts.innerHTML)
+              App.closeMenu()
+            }
+          })
       })
     })
-    document.getElementById('site-title').addEventListener('click', () => {
+    App.siteTitle.addEventListener('click', e => {
       if (App.pageType == 'projects') Panel.close()
+      if (App.isMobile) {
+        e.preventDefault()
+        if (App.menu.classList.contains('sticky--force-pinned')) {
+          App.menu.classList.remove('sticky--force-pinned')
+          App.siteTitle.classList.remove('active')
+        } else {
+          App.menu.classList.add('sticky--force-pinned')
+          App.siteTitle.classList.add('active')
+        }
+      }
     })
   },
   interact: () => {
@@ -469,10 +507,12 @@ const Panel = {
   },
   open: () => {
     Panel.element.classList.add('visible')
+    document.body.classList.add('page-panel')
     Panel.isVisible = true
   },
   close: () => {
     Panel.element.classList.remove('visible')
+    document.body.classList.remove('page-panel')
     Panel.isVisible = false
   },
   insertText: text => {
@@ -567,8 +607,8 @@ const Lightbox = {
     Lightbox.slider.on('select', function() {
       if (this.selectedElement) {
         const selectedId = this.selectedElement.dataset.id
-        if(Grid.mediasData) Grid.selectedElement = Grid.mediasData[selectedId].overview ? '[data-id="'+selectedId+'"]' : '[data-project="'+Grid.mediasData[selectedId].project+'"]'
-    }
+        if (Grid.mediasData) Grid.selectedElement = Grid.mediasData[selectedId].overview ? '[data-id="' + selectedId + '"]' : '[data-project="' + Grid.mediasData[selectedId].project + '"]'
+      }
     })
     Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
       if (!cellElement || !Modernizr.touchevents) {
@@ -581,7 +621,7 @@ const Lightbox = {
       const caption = Lightbox.element.querySelector('.caption');
       if (caption)
         caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
-    // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
     }
     Lightbox.lastCell = null
   },
@@ -593,10 +633,10 @@ const Lightbox = {
     // return isLast;
     if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
       Lightbox.previousProject()
-    // console.log('prev')
+      // console.log('prev')
     } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
       Lightbox.nextProject()
-    // console.log('next')
+      // console.log('next')
     }
   },
   accessibility: () => {
@@ -678,7 +718,6 @@ const Lightbox = {
     window.location.hash = '/'
     // Grid.description.clear()
     Lightbox.opened = false
-    Grid.selectedElement = null
   }
 }
 
@@ -690,6 +729,8 @@ const Pjax = {
     };
     Barba.Dispatcher.on('linkClicked', function(el) {
       App.linkClicked = el
+      Search.reset()
+      App.menu.classList.add('sticky--unpinned')
     });
     Barba.Pjax.Dom.wrapperId = 'main'
     Barba.Pjax.Dom.containerClass = 'pjax'

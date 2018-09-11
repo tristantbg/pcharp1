@@ -12,5 +12,6 @@
 		<?php endif ?>
 	</div>
 </div>
+<div id="overlay" event-target="close-panel"></div>
 
 <?php snippet('footer') ?>

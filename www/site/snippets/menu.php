@@ -9,9 +9,13 @@
 	</a>
 
 	<nav id="menu">
+    <a id="homepage" href="<?= $site->url() ?>"><?= $site->homepage()->title()->html() ?></a>
 		<?php foreach ($pages->visible()->not($site->homepage()) as $key => $item): ?>
       <?php if ($item->intendedTemplate() == 'search'): ?>
-		    <a class="no-barba" href="<?= $item->url() ?>"><?= $item->title()->html() ?></a>
+        <form id="search" action="<?= $site->url() ?>">
+          <input id="query" type="text" name="q">
+          <label for="query"><?= $item->title()->html() ?></label>
+        </form>
       <?php else: ?>
         <a class="no-barba" href="<?= $item->url() ?>" event-target="page"><?= $item->title()->html() ?></a>
       <?php endif ?>

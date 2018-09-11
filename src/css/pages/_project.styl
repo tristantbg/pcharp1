@@ -12,10 +12,13 @@
 			display none
 
 [page-type=project]
+	#container
+		+below($md)
+			padding 3rem 0 0
 	#page-content
 		position relative
 	#overview-link
-		position absolute
+		position fixed
 		bottom 0
 		left 0
 		width 100%
@@ -36,5 +39,5 @@
 			content 'Overview'
 		&:hover
 			background $accent
-			color $primary 
+			color $primary
 

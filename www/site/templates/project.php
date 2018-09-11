@@ -28,7 +28,7 @@
 				href="#img-<?= $key+1 ?>"
 				class="media visible"
 				data-id="<?= $media->uniqueId() ?>"
-				data-project="<?= $media->page()->uid() ?>" 
+				data-project="<?= $media->page()->uid() ?>"
 				data-index="<?= $key+1 ?>"
 				event-target="lightbox"
 				style="width: <?= $media->width() ?>px; height: <?= $media->height() ?>px"
@@ -167,5 +167,6 @@
 <?php endif ?>
 
 <div id="page-panel"></div>
+<div id="overlay" event-target="close-panel"></div>
 
 <?php snippet('footer') ?>

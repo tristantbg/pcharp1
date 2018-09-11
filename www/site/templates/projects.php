@@ -33,7 +33,7 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 				href="<?= $project->url() ?>"
 				<?php endif ?>
 				data-id="<?= $media->uniqueId() ?>"
-				data-project="<?= $project->uid() ?>" 
+				data-project="<?= $project->uid() ?>"
 				data-date="<?= $project->date('Y') ?>"
 				style="width: <?= $media->width() ?>px; height: <?= $media->height() ?>px"
 				>
@@ -73,5 +73,6 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 </div>
 
 <div id="page-panel"></div>
+<div id="overlay" event-target="close-panel"></div>
 
 <?php snippet('footer') ?>
