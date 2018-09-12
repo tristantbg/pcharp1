@@ -1,6 +1,9 @@
 title: Search
 pages: false
 files: true
+options:
+  template: false
+  delete: false
 fields:
   title:
     label: Title
