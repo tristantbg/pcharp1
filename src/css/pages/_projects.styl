@@ -1,8 +1,15 @@
+.row.error
+	padding $padding
+
 [page-type=projects]
 	#container
 		padding-right 3rem
 		+below($md)
 			padding 3rem 0 0
+	.row.error
+		padding ($padding*4.5) $padding $padding
+		+below($md)
+			padding $padding
 
 #project-description
 	position fixed
@@ -47,10 +54,6 @@
 	&.visible
 		transform none
 
-.row.error
-	padding ($padding*4) $padding $padding
-	+below($md)
-		padding $padding
 
 #medias
 	span(1)

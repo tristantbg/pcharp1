@@ -114,6 +114,8 @@ const App = {
   scrollTo: (element) => {
     if (!App.isScrolling) {
       App.isScrolling = true;
+      const max = document.documentElement.offsetHeight - App.height - window.scrollY;
+      if(element.getBoundingClientRect().top >= max) element = max
       jump(element, {
         duration: 1200,
         easing: easeInOutExpo,
@@ -304,17 +306,17 @@ const Grid = {
   },
   description: {
     show: element => {
-      if (Grid.mediasData && element.dataset.id && Grid.mediasData[element.dataset.id]) {
+      if (Grid.description.element && Grid.mediasData && element.dataset.id && Grid.mediasData[element.dataset.id]) {
         Grid.description.element.innerHTML = htmlDecode(Grid.mediasData[element.dataset.id].formattedText)
       }
     },
     showById: id => {
-      if (Grid.mediasData && Grid.mediasData[id]) {
+      if (Grid.description.element && Grid.mediasData && Grid.mediasData[id]) {
         Grid.description.element.innerHTML = htmlDecode(Grid.mediasData[id].formattedText)
       }
     },
     clear: () => {
-      Grid.description.element.innerHTML = ''
+      if(Grid.description.element) Grid.description.element.innerHTML = ''
     }
   },
   show: () => {
