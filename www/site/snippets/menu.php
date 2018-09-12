@@ -9,7 +9,7 @@
 	</a>
 
 	<nav id="menu">
-    <a id="homepage" href="<?= $site->url() ?>"><?= $site->homepage()->title()->html() ?></a>
+      <a id="homepage" href="<?= $site->url() ?>"><?= $site->homepage()->title()->html() ?></a>
 		<?php foreach ($pages->visible()->not($site->homepage()) as $key => $item): ?>
       <?php if ($item->intendedTemplate() == 'search'): ?>
         <form id="search" action="<?= $site->url() ?>">

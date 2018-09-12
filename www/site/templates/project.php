@@ -35,11 +35,12 @@
 				>
 					<div class="inner">
 						<?php
-						// $src = $media->width(50)->dataUri();
+						$src = $media->width(50)->dataUri();
 						$srcset = $media->width(500)->url() . ' 500w,';
 						for ($i = 1000; $i <= 1500; $i += 500) $srcset .= $media->width($i)->url() . ' ' . $i . 'w,';
 						?>
 						<img class="media-element lazy lazyload"
+						src="<?= $src ?>" 
 						data-src="<?= $media->width(500)->url() ?>"
 						data-srcset="<?= $srcset ?>"
 						data-sizes="auto"
@@ -60,6 +61,15 @@
 
 <?php if ($medias->count() > 0): ?>
 <div id="lightbox">
+
+	<div id="lightbox-header">
+		<div event-target="lightbox">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100 2.1L97.9 0 50 47.9 2.1 0 0 2.1 47.9 50 0 97.9l2.1 2.1L50 52.1 97.9 100l2.1-2.1L52.1 50z"/></svg>
+		</div>
+		<?php if ($page->textEn()->isNotEmpty()): ?>
+    		<div event-target="text">Text</div>
+    	<?php endif ?>
+	</div>
 
 	<?php foreach ($medias as $key => $media): ?>
 

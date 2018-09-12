@@ -37,7 +37,8 @@
 				fill currentColor
 		&::after
 			content 'Overview'
-		&:hover
-			background $accent
-			color $primary
+		+above($md + 1)
+			&:hover
+				background $accent
+				color $primary
 

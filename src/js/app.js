@@ -2,9 +2,7 @@
 
 import 'whatwg-fetch'
 import 'babel-polyfill'
-import InfiniteGrid, {
-  JustifiedLayout
-} from "@egjs/infinitegrid"
+import InfiniteGrid, { JustifiedLayout } from "@egjs/infinitegrid"
 import Headroom from 'headroom.js'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
@@ -201,6 +199,9 @@ const Search = {
   init: () => {
     Search.element = document.getElementById('search')
     if (Search.element) {
+      Search.element.addEventListener('click', () => {
+        Search.element.querySelector('input').focus()
+      })
       Search.element.addEventListener('submit', e => {
         e.preventDefault()
         Barba.Pjax.goTo(e.target.action + '?q=' + e.target[0].value)
@@ -209,7 +210,8 @@ const Search = {
     }
   },
   reset: () => {
-    if (Search.element) Search.element.querySelector('input').value = ''
+    if (Search.element)
+      Search.element.querySelector('input').value = ''
   }
 }
 
@@ -237,9 +239,9 @@ const Grid = {
       .then(response => {
         response.json().then(function(data) {
           Grid.mediasData = data
-          // if (Lightbox.opened && Lightbox.slider.selectedElement) {
-          //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
-          // }
+        // if (Lightbox.opened && Lightbox.slider.selectedElement) {
+        //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+        // }
         })
       })
   },
@@ -452,16 +454,16 @@ const Panel = {
           .then(function(response) {
             return response.text()
           }).then(function(body) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(body, "text/html");
-            const texts = doc.querySelector('#page-panel')
-            if (texts) {
-              history.replaceState(null, doc.title, href)
-              document.title = doc.title
-              Panel.insertText(texts.innerHTML)
-              App.closeMenu()
-            }
-          })
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(body, "text/html");
+          const texts = doc.querySelector('#page-panel')
+          if (texts) {
+            history.replaceState(null, doc.title, href)
+            document.title = doc.title
+            Panel.insertText(texts.innerHTML)
+            App.closeMenu()
+          }
+        })
       })
     })
     App.siteTitle.addEventListener('click', e => {
@@ -541,6 +543,7 @@ const Lightbox = {
         prevNextButtons: true,
         pageDots: false,
         draggable: true,
+        dragThreshold: 40,
         // arrowShape: {
         //   x0: 10,
         //   x1: 60,
@@ -607,7 +610,8 @@ const Lightbox = {
     Lightbox.slider.on('select', function() {
       if (this.selectedElement) {
         const selectedId = this.selectedElement.dataset.id
-        if (Grid.mediasData) Grid.selectedElement = Grid.mediasData[selectedId].overview ? '[data-id="' + selectedId + '"]' : '[data-project="' + Grid.mediasData[selectedId].project + '"]'
+        if (Grid.mediasData)
+          Grid.selectedElement = Grid.mediasData[selectedId].overview ? '[data-id="' + selectedId + '"]' : '[data-project="' + Grid.mediasData[selectedId].project + '"]'
       }
     })
     Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
@@ -621,7 +625,7 @@ const Lightbox = {
       const caption = Lightbox.element.querySelector('.caption');
       if (caption)
         caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
-      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+    // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
     }
     Lightbox.lastCell = null
   },
@@ -633,10 +637,10 @@ const Lightbox = {
     // return isLast;
     if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
       Lightbox.previousProject()
-      // console.log('prev')
+    // console.log('prev')
     } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
       Lightbox.nextProject()
-      // console.log('next')
+    // console.log('next')
     }
   },
   accessibility: () => {
@@ -665,8 +669,12 @@ const Lightbox = {
     const toggles = document.querySelectorAll('[event-target=lightbox]')
     for (let i = 0; i < toggles.length; i++) {
       toggles[i].addEventListener('click', () => {
-        Lightbox.open()
-        Lightbox.slider.selectCell(toggles[i].getAttribute('href'))
+        if (Lightbox.opened) {
+          Lightbox.close()
+        } else {
+          Lightbox.open()
+          Lightbox.slider.selectCell(toggles[i].getAttribute('href'))
+        }
       })
     }
     // const arrowLeft = document.querySelectorAll('[event-target=lightbox-previous]')
@@ -730,7 +738,7 @@ const Pjax = {
     Barba.Dispatcher.on('linkClicked', function(el) {
       App.linkClicked = el
       Search.reset()
-      App.menu.classList.add('sticky--unpinned')
+      App.closeMenu()
     });
     Barba.Pjax.Dom.wrapperId = 'main'
     Barba.Pjax.Dom.containerClass = 'pjax'
@@ -781,8 +789,9 @@ const Pjax = {
 
       App.sizeSet()
       App.interact.init()
-      document.body.classList.remove('is-loading')
-
+      setTimeout(function() {
+        document.body.classList.remove('is-loading')
+      }, 150);
 
       if (window.ga) window.ga('send', 'pageview')
     }
