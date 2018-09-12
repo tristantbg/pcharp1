@@ -2,7 +2,9 @@
 
 import 'whatwg-fetch'
 import 'babel-polyfill'
-import InfiniteGrid, { JustifiedLayout } from "@egjs/infinitegrid"
+import InfiniteGrid, {
+  JustifiedLayout
+} from "@egjs/infinitegrid"
 import Headroom from 'headroom.js'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
@@ -96,6 +98,7 @@ const App = {
     App.menu.classList.add('sticky--unpinned')
     App.menu.classList.remove('sticky--force-pinned')
     App.siteTitle.classList.remove('active')
+    // Search.unselect()
   },
   intro: () => {
     const introHide = () => {
@@ -115,7 +118,7 @@ const App = {
     if (!App.isScrolling) {
       App.isScrolling = true;
       const max = document.documentElement.offsetHeight - App.height - window.scrollY;
-      if(element.getBoundingClientRect().top >= max) element = max
+      if (element.getBoundingClientRect().top >= max) element = max
       jump(element, {
         duration: 1200,
         easing: easeInOutExpo,
@@ -156,7 +159,7 @@ const App = {
     })
     setTimeout(function() {
       App.headroom.init()
-    }, 3000);
+    }, 1500);
   },
   interact: {
     init: () => {
@@ -199,21 +202,31 @@ const App = {
 
 const Search = {
   init: () => {
-    Search.element = document.getElementById('search')
+    Search.element = document.getElementById('search-form')
     if (Search.element) {
-      Search.element.addEventListener('click', () => {
-        Search.element.querySelector('input').focus()
-      })
+      // Search.element.addEventListener('click', () => {
+      //   Search.element.getElementById('query').focus()
+      // })
       Search.element.addEventListener('submit', e => {
         e.preventDefault()
         Barba.Pjax.goTo(e.target.action + '?q=' + e.target[0].value)
         App.closeMenu()
       })
+      Search.labels = document.querySelectorAll('label.mobile')
+      Search.labels.forEach(l => {
+        l.addEventListener('click', e => {
+          e.currentTarget.classList.toggle('active')
+        })
+      })
     }
   },
   reset: () => {
-    if (Search.element)
-      Search.element.querySelector('input').value = ''
+    if (Search.element) Search.element.querySelector('input').value = ''
+  },
+  unselect: () => {
+    Search.labels.forEach(l => {
+      l.classList.remove('active')
+    })
   }
 }
 
@@ -222,6 +235,7 @@ const Grid = {
   medias: null,
   mediasData: null,
   init: () => {
+    Grid.finished = false
     Grid.mediasContainer = document.getElementById('medias')
     Grid.medias = document.querySelectorAll('#medias > .media')
     if (Grid.mediasContainer) Grid.render()
@@ -241,9 +255,9 @@ const Grid = {
       .then(response => {
         response.json().then(function(data) {
           Grid.mediasData = data
-        // if (Lightbox.opened && Lightbox.slider.selectedElement) {
-        //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
-        // }
+          // if (Lightbox.opened && Lightbox.slider.selectedElement) {
+          //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+          // }
         })
       })
   },
@@ -316,15 +330,16 @@ const Grid = {
       }
     },
     clear: () => {
-      if(Grid.description.element) Grid.description.element.innerHTML = ''
+      if (Grid.description.element) Grid.description.element.innerHTML = ''
     }
   },
   show: () => {
     Grid.mediasContainer.style.opacity = 1
     if (App.pageType == 'projects' && Grid.selectedElement) {
       const selectedElement = Grid.mediasContainer.querySelector(Grid.selectedElement)
-      if (selectedElement) App.scrollTo(selectedElement)
+      if (!Grid.finished && selectedElement) App.scrollTo(selectedElement)
     }
+    Grid.finished = true
   },
   hide: () => {
     Grid.mediasContainer.style.opacity = 0
@@ -456,16 +471,16 @@ const Panel = {
           .then(function(response) {
             return response.text()
           }).then(function(body) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(body, "text/html");
-          const texts = doc.querySelector('#page-panel')
-          if (texts) {
-            history.replaceState(null, doc.title, href)
-            document.title = doc.title
-            Panel.insertText(texts.innerHTML)
-            App.closeMenu()
-          }
-        })
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(body, "text/html");
+            const texts = doc.querySelector('#page-panel')
+            if (texts) {
+              history.replaceState(null, doc.title, href)
+              document.title = doc.title
+              Panel.insertText(texts.innerHTML)
+              App.closeMenu()
+            }
+          })
       })
     })
     App.siteTitle.addEventListener('click', e => {
@@ -531,6 +546,7 @@ const Panel = {
 
 const Lightbox = {
   init: () => {
+    Lightbox.opened = false
     Lightbox.element = document.getElementById('lightbox');
     if (Lightbox.element) {
       Lightbox.flickity(Lightbox.element, {
@@ -579,6 +595,9 @@ const Lightbox = {
       Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
         Lightbox.nextProject()
       })
+      Lightbox.slider.on('touchend', function() {
+        Lightbox.nextProject()
+      })
       const prev = Lightbox.element.querySelector('.flickity-button.previous')
       prev.removeAttribute('disabled')
       prev.addEventListener('click', () => {
@@ -620,14 +639,14 @@ const Lightbox = {
       if (!cellElement || !Modernizr.touchevents) {
         return;
       } else {
-        this.next();
+        // this.next();
       }
     });
     if (Lightbox.opened && Lightbox.slider.selectedElement) {
       const caption = Lightbox.element.querySelector('.caption');
       if (caption)
         caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
-    // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
     }
     Lightbox.lastCell = null
   },
@@ -639,10 +658,10 @@ const Lightbox = {
     // return isLast;
     if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
       Lightbox.previousProject()
-    // console.log('prev')
+      // console.log('prev')
     } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
       Lightbox.nextProject()
-    // console.log('next')
+      // console.log('next')
     }
   },
   accessibility: () => {

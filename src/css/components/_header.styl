@@ -15,26 +15,65 @@ nav#menu
 		+above($md + 1)
 			display none
 	form
+		display inline
 		label
 			float left
 			cursor pointer
 		input
+			display block
 			padding 0
 			margin 0
 			font-family inherit
 			letter-spacing inherit
 			border 0
-			caret-color $accent
 			font-size inherit
 			width 0
+			height 0
 			opacity 0
+			border-radius 0
 			color $accent
+			-webkit-appearance none
+			-moz-appearance none
+			-webkit-user-select initial
+			-khtml-user-select initial
+			-moz-user-select initial
+			-ms-user-select initial
+			user-select initial
+			caret-color $accent
 			&:focus
 				width auto
+				height auto
 				opacity 1
-				& + label
-					display none
-	& > a, & > form
+				+below($md)
+					width 100%
+					& + label
+						color $accent
+				+above($md + 1)
+					& + label
+						display none
+	+above($md + 1)
+		label.mobile
+			display none
+	+below($md)
+		label:not(.mobile)
+			display none
+		label.mobile.active
+			color $accent
+			& + *
+				input
+					height auto
+					width 'calc(100vw - %s)' % ($padding*2)
+					padding 0.4em
+					opacity 1
+					border 1px solid $secondary
+		#search:hover
+			input
+				height auto
+				width 'calc(100vw - %s)' % ($padding*2)
+				padding 0.4em
+				opacity 1
+				border 1px solid $secondary
+	& > a, & > *
 		display block
 		float left
 		padding $padding 0
