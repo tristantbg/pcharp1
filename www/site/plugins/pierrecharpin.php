@@ -48,6 +48,7 @@ file::$methods['formattedDesc'] = function($file) {
     $data['title'] = $file->imageTitle()->isNotEmpty() ?  $file->imageTitle()->html() : $page->title()->html();
     $data['subtitle'] = $file->imageSubtitle()->isNotEmpty() ?  $file->imageSubtitle()->html() : $page->subtitle()->html();
     $data['date'] = $page->date('Y');
+    if($page->dateEnd() != '') $data['date'] .= ' / '.$page->date('Y', 'dateEnd');
     $data['type'] = $file->imageType()->isNotEmpty() ?  $file->imageType()->html() : $page->type()->html();
     $data['format'] = $file->imageFormat()->isNotEmpty() ?  $file->imageFormat()->kt() : $page->format()->kt();
     $data['materials'] = $file->imageMaterials()->isNotEmpty() ?  $file->imageMaterials()->kt() : $page->materials()->kt();
@@ -94,6 +95,7 @@ page::$methods['formattedDesc'] = function($page) {
         $data['title'] = $page->title()->html();
         $data['subtitle'] = $page->subtitle()->html();
         $data['date'] = $page->date('Y');
+        if($page->dateEnd() != '') $data['date'] .= ' / '.$page->date('Y', 'dateEnd');
         $data['type'] = $page->type()->html();
         $data['format'] = $page->format()->kt();
         $data['materials'] = $page->materials()->kt();

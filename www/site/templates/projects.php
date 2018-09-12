@@ -39,9 +39,10 @@ if ($site->introImages()->isNotEmpty() && $introImage = $site->introImages()->to
 				>
 					<div class="inner">
 						<?php
+						if(!isset($maxWidth)) $maxWidth = 1360;
 						// $src = $media->width(50)->dataUri();
-						$srcset = $media->width(500)->url() . ' 500w,';
-						for ($i = 1000; $i <= 1500; $i += 500) $srcset .= $media->width($i)->url() . ' ' . $i . 'w,';
+						$srcset = $media->width(340)->url() . ' 340w,';
+						for ($i = 680; $i <= $maxWidth; $i += 340) $srcset .= $media->width($i)->url() . ' ' . $i . 'w,';
 						?>
 						<img class="media-element lazy lazyload"
 						data-src="<?= $media->width(500)->url() ?>"

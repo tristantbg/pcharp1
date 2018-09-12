@@ -121,7 +121,7 @@
 
 		      <div class="content image contain">
               <?php
-              if(!isset($maxWidth)) $maxWidth = 2720;
+              	if(!isset($maxWidth)) $maxWidth = 2720;
                 // $placeholder = $media->width(50)->dataUri();
                 $src = $media->width(1000)->url();
                 $srcset = $media->width(340)->url() . ' 340w,';

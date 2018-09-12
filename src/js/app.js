@@ -547,10 +547,15 @@ const Panel = {
 const Lightbox = {
   init: () => {
     Lightbox.opened = false
+    // if(Lightbox.slider) {
+    //   Lightbox.slider.destroy()
+    //   Lightbox.slider = null
+    // }
     Lightbox.element = document.getElementById('lightbox');
     if (Lightbox.element) {
       Lightbox.flickity(Lightbox.element, {
         cellSelector: '.slide',
+        accessibility: true,
         imagesLoaded: true,
         hash: true,
         lazyLoad: 1,
@@ -667,6 +672,14 @@ const Lightbox = {
   accessibility: () => {
     document.addEventListener('keydown', e => {
       switch (e.keyCode) {
+        // case 37:
+        //   // left
+        //   Lightbox.slider.previous()
+        //   break;
+        // case 39:
+        //   // right
+        //   Lightbox.slider.next()
+        //   break;
         case 27:
           Lightbox.close()
           break;
