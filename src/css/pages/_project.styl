@@ -18,7 +18,7 @@
 	#page-content
 		position relative
 	#overview-link
-		position fixed
+		position absolute
 		bottom 0
 		left 0
 		width 100%
@@ -27,6 +27,8 @@
 		padding $padding
 		border-top 1px solid $secondary
 		z-index 98
+		+below($md)
+			position fixed
 		svg
 			display block
 			align()
