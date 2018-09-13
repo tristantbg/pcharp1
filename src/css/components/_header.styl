@@ -92,20 +92,22 @@ nav#menu
 		&::after
 			content ''
 			position absolute
-			height ($padding*2)
+			height ($padding)
 			width 100%
-			bottom (-2*$padding)
+			bottom (-1*$padding)
 			left 0
 	&.sticky--pinned:not(.sticky--top)
 		&::after
 			visibility hidden
 	+below($md)
-		&.sticky--unpinned, &.sticky--top
+		// &.sticky--unpinned, 
+		&.sticky--top
 			&:not(.sticky--force-pinned)
 				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 				transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
 	+above($md + 1)
-		&.sticky--unpinned:not(:hover), &.sticky--top:not(:hover)
+		// &.sticky--unpinned:not(:hover), 
+		&.sticky--top:not(:hover)
 			&:not(.sticky--force-pinned)
 				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 				transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
@@ -114,9 +116,15 @@ nav#menu
 // #medias, #project-description
 // 	transition transform 400ms ease
 
-// body.sticky--menu:not(.lightbox-on)
-// 	#medias, #project-description
-// 		transform translateY(3rem) translateZ(0)
+body.sticky--menu, #page-panel.visible
+	.text-en, .text-fr, [event-target=lang-switch], [event-target=close-panel], .description
+		transition transform 400ms ease
+		
++above($md + 1)
+	body.sticky--menu
+		#page-panel.visible
+			.text-en, .text-fr, [event-target=lang-switch], [event-target=close-panel], .description
+				transform translateY(3rem) translateZ(0)
 
 header
 	#site-title

@@ -69,6 +69,7 @@ const App = {
   root: window.location.origin == 'http://localhost:8888' ? '/pierrecharpin/www/' : '/',
   init: () => {
     App.sizeSet()
+    App.pageType = document.body.getAttribute('page-type')
     App.siteTitle = document.getElementById('site-title')
     if (App.isMobile) App.siteTitle.classList.add('no-barba')
     Intro.init()
@@ -134,14 +135,20 @@ const App = {
         // document.body.classList.remove('sticky--menu')
       },
       onPin: function() {
-        // document.body.classList.add('sticky--menu')
+        document.body.classList.add('sticky--menu')
       },
       onTop: function() {
-        document.body.classList.add('sticky--menu')
+
       },
       onNotTop: function() {
         document.body.classList.remove('sticky--menu')
       }
+    })
+    App.menu.addEventListener('mouseenter', () => {
+      document.body.classList.add('sticky--menu')
+    })
+    App.menu.addEventListener('mouseleave', () => {
+      document.body.classList.remove('sticky--menu')
     })
     setTimeout(function() {
       App.headroom.init()
@@ -356,9 +363,14 @@ const Intro = {
   loopsAmount: 1,
   init: () => {
     Intro.element = document.getElementById('intro');
-    if (Intro.element) {
+    if (App.isMobile) Intro.destroy()
+    if (!App.isMobile && Intro.element) {
       Intro.loopsAmount = parseInt(Intro.element.dataset.loop, 10)
-      imagesLoaded(Intro.element, () => {
+      const images = Intro.element.querySelectorAll('img')
+      images.forEach(i => {
+        i.setAttribute('src', i.dataset.src)
+      })
+      const load = imagesLoaded(Intro.element, () => {
         Intro.flickity(Intro.element, {
           cellSelector: '.slide',
           imagesLoaded: false,
@@ -391,7 +403,7 @@ const Intro = {
   },
   destroy: () => {
     if (Intro.element) {
-      Intro.slider.destroy()
+      if(Intro.slider) Intro.slider.destroy()
       Intro.element.parentNode.removeChild(Intro.element)
       document.body.classList.remove('with-intro')
       App.stickyHeader()

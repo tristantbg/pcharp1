@@ -95,11 +95,13 @@
 						height 100%
 					// object-position top left
 					// object-fit contain
-			&.format-png, &.format-gif
-				background alpha($secondary, 0.05)
-				img
-					mix-blend-mode darken
-					object-position center
+			.content.wide
+				+above($md + 1)
+					img, video
+						border-right 0
+						border-bottom 1px solid
+						width 100%
+						height auto
 			&.is-selected
 				opacity 1
 				z-index 1

@@ -113,7 +113,7 @@
 
 		<?php else: ?>
 
-		      <div class="content image">
+		      <div class="content image<?= e($media->ratio() > 1.6, ' wide') ?>">
               <?php
               	if(!isset($maxWidth)) $maxWidth = 2720;
                 // $placeholder = $media->width(50)->dataUri();

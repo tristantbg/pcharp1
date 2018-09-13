@@ -2,7 +2,7 @@ title: Site
 pages:
   template:
     - default
-    - about
+    - page.multilang
     - entries
 fields:
   introSettings:

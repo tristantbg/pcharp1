@@ -10,13 +10,12 @@
 					<div class="slide">
 						<?php
 						if(!isset($maxWidth)) $maxWidth = 1020;
-						$src = $media->width(680)->url();
+						$src = $media->height(1200)->url();
 						$srcset = $media->width(680)->url() . ' 680w,';
 						for ($i = 1020; $i <= $maxWidth; $i += 340) $srcset .= $media->width($i)->url() . ' ' . $i . 'w,';
 						?>
 						<img class="media"
-						src="<?= $src ?>"
-						srcset="<?= $srcset ?>"
+						data-src="<?= $src ?>"
 						height="100%"
 						width="100%" />
 					</div>

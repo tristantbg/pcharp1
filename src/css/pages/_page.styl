@@ -8,7 +8,7 @@
 	top 0
 	background $secondary
 	color $primary
-	padding ($padding*6) $padding $padding
+	padding ($padding*5) $padding $padding
 	overflow scroll
 	-webkit-overflow-scrolling touch
 	transition transform 500ms $kinetic
@@ -31,7 +31,7 @@
 	[event-target=close-panel]
 		position absolute
 		padding $padding
-		top $padding
+		top 0
 		left 0
 		+below($md)
 			top ($padding*3)
@@ -43,9 +43,12 @@
 	.text-content
 		[event-target=lang-switch]
 			position absolute
-			top 1.8rem
+			top 0.8rem
 			right 0
 			padding $padding
+			+above($md + 1)
+				&:hover
+					color $accent
 			+below($md)
 				top (1.8rem + $padding*2)
 		.text-fr
@@ -72,5 +75,6 @@
 	z-index 97
 
 body.page-panel
+	overflow hidden
 	#overlay
 		display block

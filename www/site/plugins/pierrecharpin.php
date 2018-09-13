@@ -1,5 +1,9 @@
 <?php
 
+kirbytext::$post[] = function($kirbytext, $value) {
+  return preg_replace("/( ..) /i", " \${1}&nbsp;", $value);
+};
+
 file::$methods['formattedName'] = function($file, $key) {
     $page = $file->page();
 

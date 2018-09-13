@@ -1,8 +1,6 @@
-title: About
+title: Page EN/FR
 pages: false
-files: false
-options:
-  delete: false
+files: true
 fields:
   title:
     label: Title
