@@ -8,7 +8,7 @@
 		top 0
 		left (1rem + 2*$padding)
 		background $primary
-		border-bottom 1px solid $secondary
+		box-shadow 0 1px $secondary
 		z-index 95
 		transform translateY(-100%) translateZ(0)
 		+above($md + 1)
@@ -78,10 +78,10 @@
 					height 100%
 				+below($md)
 					display block
-					width auto
+					width 100%
 					height auto
-					max-width 100%
-					max-height 70vh
+					// max-width 100%
+					// max-height 70vh
 					box-shadow -1px -1px 0 0 $secondary, 1px 1px 0 0 $secondary, -1px 1px 0 0 $secondary, 1px -1px 0 0 $secondary
 			.content.video
 				width 100%

@@ -100,13 +100,13 @@ nav#menu
 		&::after
 			visibility hidden
 	+below($md)
-		// &.sticky--unpinned, 
+		&.sticky--unpinned, 
 		&.sticky--top
 			&:not(.sticky--force-pinned)
 				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding
 				transform 'translateY(calc(-100% - %s)) translateZ(0)' % (1px)
 	+above($md + 1)
-		// &.sticky--unpinned:not(:hover), 
+		&.sticky--unpinned:not(:hover), 
 		&.sticky--top:not(:hover)
 			&:not(.sticky--force-pinned)
 				// transform 'translateY(calc(-100% + %s)) translateZ(0)' % $padding

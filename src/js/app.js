@@ -14,6 +14,7 @@ require('../../node_modules/lazysizes/plugins/object-fit/ls.object-fit.js')
 require('../../node_modules/lazysizes/plugins/unveilhooks/ls.unveilhooks.js')
 import Barba from 'barba.js'
 import jump from 'jump.js'
+require('viewport-units-buggyfill').init();
 
 const easeInOutExpo = (t, b, c, d) => {
   if (t == 0) return b;
@@ -125,7 +126,7 @@ const App = {
       classes: {
         initial: "sticky",
         pinned: "sticky--pinned",
-        unpinned: "sticky--unpinned",
+        unpinned: "sticky--unpinned-disable",
         top: "sticky--top",
         notTop: "sticky--not-top",
         bottom: "sticky--bottom",
@@ -152,6 +153,7 @@ const App = {
     })
     setTimeout(function() {
       App.headroom.init()
+      App.menu.classList.add('sticky--unpinned')
     }, 1500);
   },
   interact: {
@@ -532,11 +534,11 @@ const Lightbox = {
         hash: true,
         lazyLoad: 1,
         cellAlign: 'left',
-        setGallerySize: false,
+        setGallerySize: App.isMobile,
         wrapAround: true,
         prevNextButtons: true,
         pageDots: false,
-        draggable: true,
+        draggable: '>1',
         dragThreshold: 40,
         arrowShape: 'M73.9 100l-50-50 50-50 2.2 2.1L28.2 50l47.9 47.9z'
       });
