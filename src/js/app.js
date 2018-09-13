@@ -366,6 +366,7 @@ const Intro = {
     if (App.isMobile) Intro.destroy()
     if (!App.isMobile && Intro.element) {
       Intro.loopsAmount = parseInt(Intro.element.dataset.loop, 10)
+      Intro.interval = parseInt(Intro.element.dataset.interval, 10)
       const images = Intro.element.querySelectorAll('img')
       images.forEach(i => {
         i.setAttribute('src', i.dataset.src)
@@ -380,13 +381,13 @@ const Intro = {
           adaptiveHeight: false,
           wrapAround: false,
           prevNextButtons: false,
-          autoPlay: parseInt(Intro.element.dataset.interval, 10),
           pauseOnHover: false,
           pageDots: false,
           draggable: false
         });
         Intro.element.addEventListener('click', Intro.destroy)
         Intro.slider.on('change', Intro.checkLastCell)
+        Intro.timer = setInterval(() => {Intro.slider.next(true)}, Intro.interval)
       })
     } else {
       App.stickyHeader()
@@ -403,6 +404,7 @@ const Intro = {
   },
   destroy: () => {
     if (Intro.element) {
+      window.clearInterval(Intro.timer)
       if(Intro.slider) Intro.slider.destroy()
       Intro.element.parentNode.removeChild(Intro.element)
       document.body.classList.remove('with-intro')
