@@ -68,7 +68,7 @@ files:
     mp4:
       label: Video external file link (.MP4)
       type: url
-    mp4:
+    webm:
       label: Video external file link (.WEBM)
       type: url
     filemp4:

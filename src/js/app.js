@@ -1,14 +1,13 @@
 /* jshint esversion: 6 */
 
 import 'whatwg-fetch'
-import 'babel-polyfill'
-import InfiniteGrid, {
-  JustifiedLayout
-} from "@egjs/infinitegrid"
+// import 'babel-polyfill'
+import InfiniteGrid, { JustifiedLayout } from "@egjs/infinitegrid"
 import Headroom from 'headroom.js'
 import throttle from 'lodash.throttle'
 import debounce from 'lodash.debounce'
 import Flickity from 'flickity-hash'
+import imagesLoaded from 'imagesloaded'
 import lazysizes from 'lazysizes'
 import optimumx from 'lazysizes'
 require('../../node_modules/lazysizes/plugins/object-fit/ls.object-fit.js')
@@ -72,7 +71,7 @@ const App = {
     App.sizeSet()
     App.siteTitle = document.getElementById('site-title')
     if (App.isMobile) App.siteTitle.classList.add('no-barba')
-    App.stickyHeader()
+    Intro.init()
     App.interact.init()
     Panel.menuTargets()
     Panel.init(true)
@@ -98,27 +97,14 @@ const App = {
     App.menu.classList.add('sticky--unpinned')
     App.menu.classList.remove('sticky--force-pinned')
     App.siteTitle.classList.remove('active')
-    // Search.unselect()
-  },
-  intro: () => {
-    const introHide = () => {
-      TweenMax.to(intro, 0.2, {
-        autoAlpha: 0,
-        onComplete: () => {
-          document.body.classList.remove("with-intro");
-        }
-      });
-    };
-    const intro = document.getElementById('intro');
-    if (intro && document.body.classList.contains("with-intro")) {
-      intro.addEventListener("click", introHide);
-    }
+  // Search.unselect()
   },
   scrollTo: (element) => {
     if (!App.isScrolling) {
       App.isScrolling = true;
       const max = document.documentElement.offsetHeight - App.height - window.scrollY;
-      if (element.getBoundingClientRect().top >= max) element = max
+      if (element.getBoundingClientRect().top >= max)
+        element = max
       jump(element, {
         duration: 1200,
         easing: easeInOutExpo,
@@ -221,7 +207,8 @@ const Search = {
     }
   },
   reset: () => {
-    if (Search.element) Search.element.querySelector('input').value = ''
+    if (Search.element)
+      Search.element.querySelector('input').value = ''
   },
   unselect: () => {
     Search.labels.forEach(l => {
@@ -255,9 +242,9 @@ const Grid = {
       .then(response => {
         response.json().then(function(data) {
           Grid.mediasData = data
-          // if (Lightbox.opened && Lightbox.slider.selectedElement) {
-          //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
-          // }
+        // if (Lightbox.opened && Lightbox.slider.selectedElement) {
+        //   Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+        // }
         })
       })
   },
@@ -330,7 +317,8 @@ const Grid = {
       }
     },
     clear: () => {
-      if (Grid.description.element) Grid.description.element.innerHTML = ''
+      if (Grid.description.element)
+        Grid.description.element.innerHTML = ''
     }
   },
   show: () => {
@@ -363,83 +351,53 @@ const Grid = {
   }
 }
 
-// const Sliders = {
-//   flickitys: [],
-//   init: () => {
-//     Sliders.elements = document.getElementsByClassName('slider');
-//     if (Sliders.elements.length > 0) {
-//       for (var i = 0; i < Sliders.elements.length; i++) {
-//         Sliders.flickity(Sliders.elements[i], {
-//           cellSelector: '.slide',
-//           imagesLoaded: true,
-//           lazyLoad: 1,
-//           cellAlign: 'left',
-//           setGallerySize: App.isMobile,
-//           adaptiveHeight: App.isMobile,
-//           wrapAround: true,
-//           prevNextButtons: true,
-//           pageDots: false,
-//           draggable: App.isMobile ? '>1' : false,
-//           arrowShape: 'M29.7 77.4l4.8-3.7L10 41.8h90v-6.1H10.1L34.5 4.6 29.7.9 0 38.7z'
-//         });
-//       }
-//       Sliders.accessibility()
-//     }
-//   },
-//   flickity: (element, options) => {
-//     Sliders.slider = new Flickity(element, options);
-//     Sliders.flickitys.push(Sliders.slider);
-//     if (Sliders.slider.slides.length < 1) return; // Stop if no slides
-
-//     Sliders.slider.on('change', function() {
-//       if (this.selectedElement) {
-//         const caption = this.element.parentNode.querySelector('.caption');
-//         if (caption)
-//           caption.innerHTML = this.selectedElement.getAttribute('data-caption');
-//         const number = this.element.parentNode.querySelector('.slide-number');
-//         if (number)
-//           number.innerHTML = (this.selectedIndex + 1) + '/' + this.slides.length;
-//       }
-//       const adjCellElems = this.getAdjacentCellElements(1);
-//       for (let i = 0; i < adjCellElems.length; i++) {
-//         const adjCellImgs = adjCellElems[i].querySelectorAll('.lazy:not(.lazyloaded):not(.lazyload)')
-//         for (let j = 0; j < adjCellImgs.length; j++) {
-//           adjCellImgs[j].classList.add('lazyload')
-//         }
-//       }
-//     });
-//     Sliders.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
-//       if (!cellElement) {
-//         return;
-//       } else {
-//         this.next();
-//       }
-//     });
-//     if (Sliders.slider.selectedElement) {
-//       const caption = Sliders.slider.element.querySelector('.caption');
-//       if (caption)
-//         caption.innerHTML = Sliders.slider.selectedElement.getAttribute('data-caption');
-//       const number = Sliders.slider.element.parentNode.querySelector('.slide-number');
-//       if (number)
-//         number.innerHTML = (Sliders.slider.selectedIndex + 1) + '/' + Sliders.slider.slides.length;
-//     }
-//   },
-//   accessibility: () => {
-//     const prevNext = document.getElementsByClassName('flickity-prev-next-button')
-
-//     for (var i = 0; i < prevNext.length; i++) {
-//       const elem = prevNext[i]
-//       elem.addEventListener('mousemove', event => {
-//         var svg = elem.querySelector("svg");
-//         var parentOffset = elem.getBoundingClientRect();
-//         svg.style.top = event.pageY - parentOffset.top - pageYOffset + "px";
-//         svg.style.left = event.pageX - parentOffset.left + "px";
-
-//       })
-//     }
-
-//   }
-// }
+const Intro = {
+  loops: 0,
+  loopsAmount: 1,
+  init: () => {
+    Intro.element = document.getElementById('intro');
+    if (Intro.element) {
+      Intro.loopsAmount = parseInt(Intro.element.dataset.loop, 10)
+      imagesLoaded(Intro.element, () => {
+        Intro.flickity(Intro.element, {
+          cellSelector: '.slide',
+          imagesLoaded: false,
+          lazyLoad: false,
+          cellAlign: 'center',
+          setGallerySize: false,
+          adaptiveHeight: false,
+          wrapAround: false,
+          prevNextButtons: false,
+          autoPlay: parseInt(Intro.element.dataset.interval, 10),
+          pauseOnHover: false,
+          pageDots: false,
+          draggable: false
+        });
+        Intro.element.addEventListener('click', Intro.destroy)
+        Intro.slider.on('change', Intro.checkLastCell)
+      })
+    } else {
+      App.stickyHeader()
+    }
+  },
+  flickity: (element, options) => {
+    Intro.slider = new Flickity(element, options);
+  },
+  checkLastCell: () => {
+    if (Intro.slider.selectedIndex == 0) {
+      Intro.loops++
+      if (Intro.loops >= Intro.loopsAmount) Intro.destroy()
+    }
+  },
+  destroy: () => {
+    if (Intro.element) {
+      Intro.slider.destroy()
+      Intro.element.parentNode.removeChild(Intro.element)
+      document.body.classList.remove('with-intro')
+      App.stickyHeader()
+    }
+  }
+}
 
 const Panel = {
   isVisible: false,
@@ -471,16 +429,16 @@ const Panel = {
           .then(function(response) {
             return response.text()
           }).then(function(body) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(body, "text/html");
-            const texts = doc.querySelector('#page-panel')
-            if (texts) {
-              history.replaceState(null, doc.title, href)
-              document.title = doc.title
-              Panel.insertText(texts.innerHTML)
-              App.closeMenu()
-            }
-          })
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(body, "text/html");
+          const texts = doc.querySelector('#page-panel')
+          if (texts) {
+            history.replaceState(null, doc.title, href)
+            document.title = doc.title
+            Panel.insertText(texts.innerHTML)
+            App.closeMenu()
+          }
+        })
       })
     })
     App.siteTitle.addEventListener('click', e => {
@@ -560,21 +518,12 @@ const Lightbox = {
         hash: true,
         lazyLoad: 1,
         cellAlign: 'left',
-        setGallerySize: App.isMobile,
-        adaptiveHeight: App.isMobile,
+        setGallerySize: false,
         wrapAround: true,
         prevNextButtons: true,
         pageDots: false,
         draggable: true,
         dragThreshold: 40,
-        // arrowShape: {
-        //   x0: 10,
-        //   x1: 60,
-        //   y1: 50,
-        //   x2: 70,
-        //   y2: 50,
-        //   x3: 20
-        // },
         arrowShape: 'M73.9 100l-50-50 50-50 2.2 2.1L28.2 50l47.9 47.9z'
       });
       Lightbox.accessibility()
@@ -651,7 +600,7 @@ const Lightbox = {
       const caption = Lightbox.element.querySelector('.caption');
       if (caption)
         caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
-      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+    // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
     }
     Lightbox.lastCell = null
   },
@@ -662,11 +611,13 @@ const Lightbox = {
     // const isLast = Lightbox.slider.cells.every(seen)
     // return isLast;
     if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
+      document.getElementById('container').style.opacity = 0
       Lightbox.previousProject()
-      // console.log('prev')
+    // console.log('prev')
     } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
+      document.getElementById('container').style.opacity = 0
       Lightbox.nextProject()
-      // console.log('next')
+    // console.log('next')
     }
   },
   accessibility: () => {

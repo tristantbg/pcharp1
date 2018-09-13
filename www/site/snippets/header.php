@@ -72,6 +72,8 @@
 
 <div id="loader"></div>
 
+<?php snippet('intro') ?>
+
 <div id="main">
 
   <?php snippet('menu') ?>

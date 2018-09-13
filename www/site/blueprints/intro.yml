@@ -1,10 +1,8 @@
 title: Intro
-pages: true
-files: true
+pages:
+  template: loop
+files: false
 fields:
   title:
     label: Title
     type:  text
-  text:
-    label: Text
-    type:  textarea

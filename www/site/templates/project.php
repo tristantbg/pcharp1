@@ -73,7 +73,7 @@
 
 	<?php foreach ($medias as $key => $media): ?>
 
-		<?php $isVideo = $media->videofile()->isNotEmpty() || $media->videostream()->isNotEmpty() || $media->videolink()->isNotEmpty() || $media->videoexternal()->isNotEmpty() ?>
+		<?php $isVideo = $media->filemp4()->isNotEmpty() || $media->stream()->isNotEmpty() || $media->mp4()->isNotEmpty() ?>
 
 		<div class="slide"
 		id="img-<?= $key+1 ?>"
@@ -82,44 +82,38 @@
 		>
 
 
-		<?php if($isVideo): ?>
-			<div class="content video <?= $media->contentSize() ?>">
+		<?php if($media->stream()->isNotEmpty() || $media->mp4()->isNotEmpty() || $media->filemp4()->isNotEmpty()): ?>
+			<div class="content video">
   				<?php
-  				$poster = thumb($media, array('width' => 1500))->url();
-
-  				if ($media->videostream()->isNotEmpty() || $media->videoexternal()->isNotEmpty() || $media->videofile()->isNotEmpty()) {
-  					$video  = '<video class="media js-player"';
-  					$video .= ' poster="'.$poster.'"';
-  					if ($media->videostream()->isNotEmpty()) {
-  						$video .= ' data-stream="'.$media->videostream().'"';
-  					}
-  					$video .= ' width="auto" height="100%" controls="false" loop>';
-  					if ($media->videoexternal()->isNotEmpty()) {
-  						$video .= '<source src=' . $media->videoexternal() . ' type="video/mp4">';
-  					} else if ($media->videofile()->isNotEmpty()){
-  						$video .= '<source src=' . $media->videofile()->toFile()->url() . ' type="video/mp4">';
-  					}
-  					$video .= '</video>';
-  					echo $video;
-  				}
-  				else {
-  					$url = $media->videolink();
-  					if ($media->vendor() == "youtube") {
-  						echo '<div class="media js-player" data-type="youtube" data-video-id="' . $url  . '"></div>';
-  					} else {
-  						echo '<div class="media js-player" data-type="vimeo" data-video-id="' . $url  . '"></div>';
-  					}
-  				}
+  				$poster = thumb($media, array('width' => 1020))->url();
+				$video  = '<video class="js-player"';
+				// $video .= ' poster="'.$poster.'"';
+				if ($media->stream()->isNotEmpty()) {
+					$video .= ' data-stream="'.$media->stream().'"';
+				}
+				$video .= ' width="auto" height="100%" controls="false" playsinline muted autoplay loop>';
+				if ($media->mp4()->isNotEmpty()) {
+					$video .= '<source src=' . $media->mp4() . ' type="video/mp4">';
+				} else if ($media->filemp4()->isNotEmpty()){
+					$video .= '<source src=' . $media->filemp4()->toFile()->url() . ' type="video/mp4">';
+				}
+				if ($media->webm()->isNotEmpty()) {
+					$video .= '<source src=' . $media->webm() . ' type="video/webm">';
+				} else if ($media->filewebm()->isNotEmpty()){
+					$video .= '<source src=' . $media->filewebm()->toFile()->url() . ' type="video/webm">';
+				}
+				$video .= '</video>';
+				echo $video;
   				?>
 			</div>
 
 			<div class="project-description">
-        <?= $media->formattedDesc() ?>
-      </div>
+        		<?= $media->formattedDesc() ?>
+      		</div>
 
 		<?php else: ?>
 
-		      <div class="content image contain">
+		      <div class="content image">
               <?php
               	if(!isset($maxWidth)) $maxWidth = 2720;
                 // $placeholder = $media->width(50)->dataUri();

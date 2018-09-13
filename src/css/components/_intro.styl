@@ -1,0 +1,33 @@
+#intro
+	hideselect()
+	width 100%
+	height 100%
+	position fixed
+	top 0
+	left 0
+	background $primary
+	z-index 101
+	cursor pointer
+	.flickity-viewport
+		width 100%
+	.flickity-slider
+		transform none !important
+	.slide
+		width 100%
+		height 100%
+		left 0 !important
+		z-index 0
+		opacity 0
+		padding ($padding*3)
+		img
+			width 100%
+			height 100%
+			object-fit contain
+			font-family 'object-fit: contain'
+		&.is-selected
+			opacity 1
+			z-index 1
+
+body:not(.with-intro)
+	#intro
+		display none
