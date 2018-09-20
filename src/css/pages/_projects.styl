@@ -23,14 +23,22 @@
 	z-index 94
 	+below($md)
 		display none
+	#project-texts
+		display none
+
+#project-description, .project-description
 	[event-target=text]
-		position absolute
+		// position absolute
 		bottom 0
 		left 0
 		color $accent
-		padding $padding
-	#project-texts
-		display none
+		margin-top $padding
+		// padding $padding
+		+above($md + 1)
+			&:hover
+				color $secondary
+		+below($md)
+			display none
 
 #timeline-date
 	position fixed
@@ -102,7 +110,7 @@
 					// transform scale(1)
 	&.no-fit
 		.media
-			height 14vw !important
+			height 20vw !important
 			width auto !important
 			img
 				width auto

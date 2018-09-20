@@ -15,7 +15,7 @@ for more information: http://getkirby.com/license
 
 */
 
-@include __DIR__ . DS . 'licence.php';
+@include __DIR__ . DS . 'license.php';
 
 /*
 
@@ -58,6 +58,12 @@ c::set('sitemap.exclude', array('error'));
 c::set('sitemap.important', array('contact'));
 c::set('thumb.quality', 100);
 c::set('thumbs.driver', 'im');
+c::set('plugin.updateid', array(
+  array(
+    'pages'  => function () { return site()->index()->filterBy('intendedTemplate', 'entries')->children(); },
+    'fields' => 'entries'
+  )
+));
 c::set('routes', array(
 	// array(
 	// 	'pattern' => 'info/(:any)',

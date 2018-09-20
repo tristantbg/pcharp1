@@ -19,6 +19,8 @@ nav#menu
 		label
 			float left
 			cursor pointer
+			+above($md + 1)
+				margin-right 0.5em
 		input
 			display block
 			padding 0
@@ -40,6 +42,10 @@ nav#menu
 			-ms-user-select initial
 			user-select initial
 			caret-color $accent
+			+above($md + 1)
+				float left
+				position relative
+				top 0.05em
 			&:focus
 				width auto
 				height auto
@@ -50,7 +56,7 @@ nav#menu
 						color $accent
 				+above($md + 1)
 					& + label
-						display none
+						// display none
 	+above($md + 1)
 		label.mobile
 			display none
@@ -117,13 +123,13 @@ nav#menu
 // 	transition transform 400ms ease
 
 body.sticky--menu, #page-panel.visible
-	.text-en, .text-fr, [event-target=lang-switch], [event-target=close-panel], .description
+	.text-content, [event-target=lang-switch], [event-target=close-panel]
 		transition transform 400ms ease
 		
 +above($md + 1)
 	body.sticky--menu
 		#page-panel.visible
-			.text-en, .text-fr, [event-target=lang-switch], [event-target=close-panel], .description
+			.text-content, [event-target=lang-switch], [event-target=close-panel]
 				transform translateY(3rem) translateZ(0)
 
 header

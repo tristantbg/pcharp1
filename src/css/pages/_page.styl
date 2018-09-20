@@ -8,7 +8,7 @@
 	top 0
 	background $secondary
 	color $primary
-	padding ($padding*5) $padding $padding
+	padding ($padding*5) $padding 0
 	overflow scroll
 	-webkit-overflow-scrolling touch
 	transition transform 500ms $kinetic
@@ -16,7 +16,7 @@
 	+below($md)
 		left 0
 		width 100%
-		padding ($padding*8) $padding $padding
+		padding ($padding*8) $padding 0
 	&:not(.visible)
 		transform translateX(-100%) translateZ(0)
 	p
@@ -41,6 +41,9 @@
 			path
 				fill $primary
 	.text-content
+		margin-bottom ($padding*5)
+		+below($md)
+			margin-bottom ($padding*8)
 		[event-target=lang-switch]
 			position absolute
 			top 0.8rem

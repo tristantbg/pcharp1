@@ -15,8 +15,8 @@
         <label class="mobile"><?= $item->title()->html() ?></label>
         <div id="search">
           <form id="search-form" action="<?= $site->url() ?>">
-            <input id="query" type="text" name="q">
             <label for="query"><?= $item->title()->html() ?></label>
+            <input id="query" type="text" name="q">
           </form>
         </div>
       <?php else: ?>

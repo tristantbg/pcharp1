@@ -1,6 +1,6 @@
 <?php
 
-kirbytext::$post[] = function($kirbytext, $value) {
+kirbytext::$pre[] = function($kirbytext, $value) {
   return preg_replace("/( ..) /i", " \${1}&nbsp;", $value);
 };
 
@@ -81,21 +81,30 @@ file::$methods['formattedDesc'] = function($file) {
 page::$methods['formattedDesc'] = function($page) {
     $data = [];
     $html = new Brick('div');
-    $html->attr('class', 'description');
 
     if ($page->intendedTemplate() == 'entries') {
 
+    	$html->attr('class', 'text-content');
         $data['entries'] = $page->entries()->toStructure();
 
         foreach ($data['entries'] as $key => $e) {
-            $brick = new Brick('div');
-            appendBrick($e->title()->html(), 'entry-title', $brick);
-            appendBrick($e->text()->kt(), 'entry-text', $brick);
-            appendBrick($brick, 'entry', $html);
+        	if ($e->pageLink()->isNotEmpty() && $pageLink = page($e->pageLink()->value())) {
+        		$brick = new Brick('a');
+        		$brick->attr('href', $pageLink->url());
+            	appendBrick($e->title()->html(), 'entry-title', $brick);
+            	appendBrick($e->text()->kt(), 'entry-text', $brick);
+            	appendBrick($brick, 'entry', $html);
+        	} else {
+        		$brick = new Brick('div');
+            	appendBrick($e->title()->html(), 'entry-title', $brick);
+            	appendBrick($e->text()->kt(), 'entry-text', $brick);
+            	appendBrick($brick, 'entry', $html);
+        	}
         }
 
     } elseif($page->intendedTemplate() == 'project') {
 
+    	$html->attr('class', 'description');
         $data['title'] = $page->title()->html();
         $data['subtitle'] = $page->subtitle()->html();
         $data['date'] = $page->date('Y');
@@ -121,6 +130,7 @@ page::$methods['formattedDesc'] = function($page) {
     }
     else {
 
+    	$html->attr('class', 'text-content');
         $data['text'] = $page->text()->kt();
 
         appendBrick($data['text'], 'entry', $html);

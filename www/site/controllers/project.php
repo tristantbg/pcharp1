@@ -2,6 +2,7 @@
 
 return function ($site, $pages, $page) {
 	
+	$projects = $page->parent()->children()->visible()->sortBy('date', 'desc');
 	$medias = new Collection();
 
 	foreach ($page->medias()->toStructure() as $m) {
@@ -11,7 +12,8 @@ return function ($site, $pages, $page) {
 	}
 
 	return array(
-	 'medias' => $medias
+	 'medias' => $medias,
+	 'projects' => $projects
 	);
 }
 

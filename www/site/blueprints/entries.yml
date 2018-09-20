@@ -20,5 +20,12 @@ fields:
       text:
         label: Text
         type: textarea
-
-
+      pageLink:
+        label: Page Link
+        type: quickselect
+        options: query
+        query:
+          page: works
+          options: children
+          text: '{{title}} ({{num}})'
+          value: '{{uri}}'

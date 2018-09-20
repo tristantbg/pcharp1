@@ -138,9 +138,7 @@ const App = {
       onPin: function() {
         document.body.classList.add('sticky--menu')
       },
-      onTop: function() {
-
-      },
+      onTop: function() {},
       onNotTop: function() {
         document.body.classList.remove('sticky--menu')
       }
@@ -230,6 +228,11 @@ const Grid = {
   mediasContainer: null,
   medias: null,
   mediasData: null,
+  options: {
+    minSize: 150,
+    maxSize: 250,
+    margin: 0
+  },
   init: () => {
     Grid.finished = false
     Grid.mediasContainer = document.getElementById('medias')
@@ -258,7 +261,7 @@ const Grid = {
       })
   },
   render: () => {
-    if (!App.isMobile && Grid.medias.length < 5) {
+    if (!App.isMobile && Grid.medias.length < 7) {
       if (!App.isMobile) Grid.mediasContainer.classList.add('no-fit')
       Grid.show()
       return
@@ -272,11 +275,19 @@ const Grid = {
       horizontal: false,
     })
 
-    Grid.element.setLayout(JustifiedLayout, {
-      minSize: App.isMobile ? 80 : 150,
-      maxSize: 250,
-      margin: 0
-    })
+    if (App.isMobile) {
+      Grid.options.minSize = 80
+    } else {
+      if (App.pageType == 'project') {
+        Grid.options.minSize = 250
+        Grid.options.maxSize = 400
+      } else {
+        Grid.options.minSize = 150
+        Grid.options.maxSize = 250
+      }
+    }
+
+    Grid.element.setLayout(JustifiedLayout, Grid.options)
     Grid.element.on('layoutComplete', Grid.show)
 
     Grid.element.layout()
@@ -389,7 +400,9 @@ const Intro = {
         });
         Intro.element.addEventListener('click', Intro.destroy)
         Intro.slider.on('change', Intro.checkLastCell)
-        Intro.timer = setInterval(() => {Intro.slider.next(true)}, Intro.interval)
+        Intro.timer = setInterval(() => {
+          Intro.slider.next(true)
+        }, Intro.interval)
       })
     } else {
       App.stickyHeader()
@@ -407,7 +420,7 @@ const Intro = {
   destroy: () => {
     if (Intro.element) {
       window.clearInterval(Intro.timer)
-      if(Intro.slider) Intro.slider.destroy()
+      if (Intro.slider) Intro.slider.destroy()
       Intro.element.parentNode.removeChild(Intro.element)
       document.body.classList.remove('with-intro')
       App.stickyHeader()
@@ -520,13 +533,14 @@ const Panel = {
 
 const Lightbox = {
   init: () => {
-    Lightbox.opened = false
+    Lightbox.opened = document.body.classList.contains('lightbox-on')
     // if(Lightbox.slider) {
     //   Lightbox.slider.destroy()
     //   Lightbox.slider = null
     // }
     Lightbox.element = document.getElementById('lightbox');
     if (Lightbox.element) {
+      Lightbox.videos = Lightbox.element.querySelectorAll('video')
       Lightbox.flickity(Lightbox.element, {
         cellSelector: '.slide',
         accessibility: true,
@@ -535,10 +549,10 @@ const Lightbox = {
         lazyLoad: 1,
         cellAlign: 'left',
         setGallerySize: App.isMobile,
-        wrapAround: true,
+        wrapAround: false,
         prevNextButtons: true,
         pageDots: false,
-        draggable: '>1',
+        draggable: true,
         dragThreshold: 40,
         arrowShape: 'M73.9 100l-50-50 50-50 2.2 2.1L28.2 50l47.9 47.9z'
       });
@@ -550,9 +564,10 @@ const Lightbox = {
       const params = getUrlParams()
       if (params.slide) {
         Lightbox.slider.selectCell('#' + params.slide)
-        window.history.replaceState(null, null, window.location.href.replace(window.location.search, ''));
+        // window.history.replaceState(null, null, window.location.href.replace(window.location.search, ''));
         Lightbox.open()
       }
+      Lightbox.lastCell = Lightbox.slider.selectedIndex
       Lightbox.element.classList.add('loaded')
     }
   },
@@ -568,27 +583,39 @@ const Lightbox = {
       Lightbox.slider.on('touchend', function() {
         Lightbox.nextProject()
       })
-      const prev = Lightbox.element.querySelector('.flickity-button.previous')
-      prev.removeAttribute('disabled')
-      prev.addEventListener('click', () => {
-        Lightbox.previousProject()
+    }
+    Lightbox.prev = Lightbox.element.querySelector('.flickity-button.previous')
+    if (Lightbox.prev) {
+
+      Lightbox.prev.removeAttribute('disabled')
+      Lightbox.prev.addEventListener('click', () => {
+        Lightbox.checkLastCell('backward')
       })
-      const next = Lightbox.element.querySelector('.flickity-button.next')
-      next.removeAttribute('disabled')
-      next.addEventListener('click', () => {
-        Lightbox.nextProject()
+    }
+
+    Lightbox.next = Lightbox.element.querySelector('.flickity-button.next')
+    if (Lightbox.next) {
+      Lightbox.next.removeAttribute('disabled')
+      Lightbox.next.addEventListener('click', () => {
+        Lightbox.checkLastCell('forward')
       })
     }
     Lightbox.slider.on('change', function() {
-      Lightbox.checkLastCell()
-      Lightbox.lastCell = Lightbox.slider.selectedIndex
       resizeWindow()
+      Lightbox.prev.removeAttribute('disabled')
+      Lightbox.next.removeAttribute('disabled')
       if (this.selectedElement) {
         const caption = this.element.parentNode.querySelector('.caption');
         if (caption)
           caption.innerHTML = this.selectedElement.getAttribute('data-caption');
         const selectedId = this.selectedElement.dataset.id
         Grid.description.showById(selectedId)
+        Lightbox.videos.forEach(v => {
+          v.pause()
+          v.currentTime = 0
+        })
+        const v = this.selectedElement.querySelector('video')
+        if (v) v.play()
       }
       const adjCellElems = this.getAdjacentCellElements(1);
       for (let i = 0; i < adjCellElems.length; i++) {
@@ -609,46 +636,68 @@ const Lightbox = {
       if (!cellElement || !Modernizr.touchevents) {
         return;
       } else {
-        // this.next();
+        if (pointer.pageX > App.width / 2) {
+          Lightbox.checkLastCell('forward')
+          this.next()
+        } else {
+          Lightbox.checkLastCell('backward')
+          this.previous()
+        }
       }
     });
     if (Lightbox.opened && Lightbox.slider.selectedElement) {
       const caption = Lightbox.element.querySelector('.caption');
       if (caption)
         caption.innerHTML = Lightbox.slider.selectedElement.getAttribute('data-caption');
-    // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+      // Grid.description.showById(Lightbox.slider.selectedElement.dataset.id)
+      Lightbox.slider.selectedCell.seen = true
     }
     Lightbox.lastCell = null
   },
-  checkLastCell: () => {
-    // function seen(element) {
-    //   return element.seen === true;
-    // }
-    // const isLast = Lightbox.slider.cells.every(seen)
-    // return isLast;
-    if (Lightbox.lastCell == 0 && Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1) {
+  checkLastCell: way => {
+    if (Lightbox.slider.selectedIndex == 0 && Lightbox.lastCell == 0 && way == 'backward') {
       document.getElementById('container').style.opacity = 0
       Lightbox.previousProject()
     // console.log('prev')
-    } else if (Lightbox.lastCell == Lightbox.slider.slides.length - 1 && Lightbox.slider.selectedIndex == 0) {
+    } else if (Lightbox.slider.selectedIndex == Lightbox.slider.slides.length - 1 && Lightbox.lastCell == Lightbox.slider.slides.length - 1 && way == 'forward') {
       document.getElementById('container').style.opacity = 0
       Lightbox.nextProject()
     // console.log('next')
     }
+    Lightbox.lastCell = Lightbox.slider.selectedIndex
+    // function seen(element) {
+    //   return element.seen === true;
+    // }
+    // const isLast = Lightbox.slider.cells.every(seen)
+
+  // if (isLast) {
+  //   document.getElementById('container').style.opacity = 0
+  //   if (Lightbox.way == 'forward') {
+  //     Lightbox.nextProject()
+  //   } else {
+  //     Lightbox.previousProject()
+  //   }
+  // }
   },
   accessibility: () => {
     document.addEventListener('keydown', e => {
       switch (e.keyCode) {
         // case 37:
-        //   // left
-        //   Lightbox.slider.previous()
+        //   if (Lightbox.slider) {
+        //     Lightbox.checkLastCell('backward')
+        //     Lightbox.slider.previous()
+        //   }
         //   break;
         // case 39:
-        //   // right
-        //   Lightbox.slider.next()
+        //   if (Lightbox.slider) {
+        //     Lightbox.checkLastCell('forward')
+        //     Lightbox.slider.next()
+        //   }
         //   break;
         case 27:
-          Lightbox.close()
+          if (Lightbox.slider) {
+            Lightbox.close()
+          }
           break;
         default:
           return;
@@ -720,6 +769,13 @@ const Lightbox = {
   open: () => {
     document.body.classList.add('lightbox-on')
     Lightbox.slider.element.focus()
+    Lightbox.videos.forEach(v => {
+      v.pause()
+      v.currentTime = 0
+    })
+    const v = Lightbox.slider.selectedElement.querySelector('video')
+    if (v) v.play()
+    Lightbox.slider.selectedCell.seen = true
     Lightbox.opened = true
   },
   close: () => {

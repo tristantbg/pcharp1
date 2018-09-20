@@ -134,7 +134,12 @@
               </noscript>
 		      </div>
 
-		      <div class="project-description"><?= $media->formattedDesc() ?></div>
+		      <div class="project-description">
+		      	<?= $media->formattedDesc() ?>
+		      	<?php if ($page->textEn()->isNotEmpty()): ?>
+    				<div event-target="text">Text</div>
+				<?php endif ?>
+		      </div>
 
 		<?php endif ?>
 
@@ -157,6 +162,7 @@
 		$prev = $projects->last();
 	}
 	$prevUrl = $prev->url();
+	$prevUrl .= '?slide=img-'.$prev->medias()->toStructure()->count()
 
 	?>
 
