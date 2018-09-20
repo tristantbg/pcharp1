@@ -3,7 +3,7 @@
 		hideselect()
 		// display none
 		width 'calc(100% - %s)' % (1rem + 2*$padding)
-		padding-bottom (1rem + 2*$padding)
+		// padding-bottom (1rem + 2*$padding)
 		position fixed
 		top 0
 		left (1rem + 2*$padding)
@@ -12,7 +12,7 @@
 		z-index 95
 		transform translateY(calc(-100% - 1px)) translateZ(0)
 		+above($md + 1)
-			height 100vh
+			height 'calc(100vh - %s)' % ($padding*3)
 		+below($md)
 			height 'calc(100vh - %s)' % ($padding*3)
 			top ($padding*3)

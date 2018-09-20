@@ -168,15 +168,14 @@
 
 	<a id="next-project-link" href="<?= $nextUrl ?>"></a>
 	<a id="previous-project-link" href="<?= $prevUrl ?>"></a>
-	<a id="overview-link" href="<?= $site->url() ?>">
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100 26.1l-50 50-50-50 2.1-2.2L50 71.8l47.9-47.9z"/></svg>
-	</a>
-
 
 </div>
 <?php endif ?>
 
 <div id="page-panel"></div>
 <div id="overlay" event-target="close-panel"></div>
+<a id="overview-link" href="<?= $site->url() ?>">
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100 26.1l-50 50-50-50 2.1-2.2L50 71.8l47.9-47.9z"/></svg>
+</a>
 
 <?php snippet('footer') ?>

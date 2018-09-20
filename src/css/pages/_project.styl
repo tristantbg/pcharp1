@@ -17,18 +17,22 @@
 			padding 3rem 0 0
 	#page-content
 		position relative
+	#medias
+		margin-bottom ($padding*3)
 	#overview-link
-		position absolute
+		position fixed
 		bottom 0
-		left 0
-		width 100%
+		left ($padding*3)
+		width 'calc(100% - %s)' % ($padding*3)
 		height (1rem + 2*$padding)
 		background $primary
 		padding $padding
 		border-top 1px solid $secondary
-		z-index 98
+		z-index 97
 		+below($md)
 			position fixed
+			left 0
+			width 100%
 		svg
 			display block
 			align()
