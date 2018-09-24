@@ -1,7 +1,8 @@
 <?php
 
 return function ($site, $pages, $page) {
-	$projects = $page->children()->visible()->sortBy('date', 'desc');
+	// $projects = $page->children()->visible()->sortBy('date', 'desc');
+	$projects = $page->children()->visible()->flip();
 	$query = get('q');
 
 	// Get all medias

@@ -149,15 +149,27 @@
 
 	<?php
 
-	if ($page->hasNextVisible('date', 'desc')){
-		$next = $page->nextVisible('date', 'desc');
+	// if ($page->hasNextVisible('date', 'desc')){
+	// 	$next = $page->nextVisible('date', 'desc');
+	// } else {
+	// 	$next = $projects->first();
+	// }
+	// $nextUrl = $next->url();
+
+	// if ($page->hasPrevVisible('date', 'desc')){
+	// 	$prev = $page->prevVisible('date', 'desc');
+	// } else {
+	// 	$prev = $projects->last();
+	// }
+	if ($page->hasNextVisible('num', 'desc')){
+		$next = $page->nextVisible('num', 'desc');
 	} else {
 		$next = $projects->first();
 	}
 	$nextUrl = $next->url();
 
-	if ($page->hasPrevVisible('date', 'desc')){
-		$prev = $page->prevVisible('date', 'desc');
+	if ($page->hasPrevVisible('num', 'desc')){
+		$prev = $page->prevVisible('num', 'desc');
 	} else {
 		$prev = $projects->last();
 	}

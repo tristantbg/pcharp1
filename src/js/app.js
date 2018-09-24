@@ -261,7 +261,7 @@ const Grid = {
       })
   },
   render: () => {
-    if (!App.isMobile && Grid.medias.length < 7) {
+    if (!App.isMobile && Grid.medias.length < 4) {
       if (!App.isMobile) Grid.mediasContainer.classList.add('no-fit')
       Grid.show()
       return
