@@ -41,19 +41,20 @@
 			path
 				fill $primary
 	.text-content
+		position relative
 		margin-bottom ($padding*5)
 		+below($md)
 			margin-bottom ($padding*8)
 		[event-target=lang-switch]
 			position absolute
-			top 0.8rem
+			top -4.2rem
 			right 0
 			padding $padding
 			+above($md + 1)
 				&:hover
 					color $accent
 			+below($md)
-				top (1.8rem + $padding*2)
+				top (-2.2rem - $padding*2)
 		.text-fr
 			display none
 		&[lang="en"]

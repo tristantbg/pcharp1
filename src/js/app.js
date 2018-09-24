@@ -261,7 +261,7 @@ const Grid = {
       })
   },
   render: () => {
-    if (!App.isMobile && Grid.medias.length < 4) {
+    if (!App.isMobile && Grid.medias.length < 3) {
       if (!App.isMobile) Grid.mediasContainer.classList.add('no-fit')
       Grid.show()
       return
@@ -290,8 +290,11 @@ const Grid = {
     Grid.element.setLayout(JustifiedLayout, Grid.options)
     Grid.element.on('layoutComplete', Grid.show)
 
-    Grid.element.layout()
-    Grid.interact()
+    setTimeout(function() {
+      Grid.element.layout()
+      Grid.interact()
+    }, 100);
+    
   },
   timeline: {
     element: null,
@@ -630,10 +633,18 @@ const Lightbox = {
         const selectedId = this.selectedElement.dataset.id
         if (Grid.mediasData)
           Grid.selectedElement = Grid.mediasData[selectedId].overview ? '[data-id="' + selectedId + '"]' : '[data-project="' + Grid.mediasData[selectedId].project + '"]'
+        if (!App.isMobile) {
+          const img = this.selectedElement.querySelector('.content img, .content video')
+          const imgWidth = img.offsetWidth
+          Lightbox.prev.style.width = imgWidth/2 + 'px'
+          Lightbox.prev.style.opacity = 0
+          Lightbox.next.style.width = `calc((100% - 15rem) - ${imgWidth/2}px)`
+          Lightbox.next.style.opacity = 0
+        }
       }
     })
     Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
-      if (!cellElement || !Modernizr.touchevents) {
+      if (!cellElement || event.target.className == 'description' || !Modernizr.touchevents) {
         return;
       } else {
         if (pointer.pageX > App.width / 2) {
@@ -709,7 +720,7 @@ const Lightbox = {
       elem.addEventListener('mousemove', event => {
         var svg = elem.querySelector("svg")
         var parentOffset = elem.getBoundingClientRect()
-        svg.style.opacity = 1
+        svg.parentNode.style.opacity = 1
         svg.style.top = event.pageY - parentOffset.top - pageYOffset + "px"
         svg.style.left = event.pageX - parentOffset.left + "px"
 
