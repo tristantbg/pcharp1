@@ -14,7 +14,8 @@ require('../../node_modules/lazysizes/plugins/object-fit/ls.object-fit.js')
 require('../../node_modules/lazysizes/plugins/unveilhooks/ls.unveilhooks.js')
 import Barba from 'barba.js'
 import jump from 'jump.js'
-require('viewport-units-buggyfill').init();
+const viewportUnitsBuggyfill = require('viewport-units-buggyfill')
+viewportUnitsBuggyfill.init()
 
 const easeInOutExpo = (t, b, c, d) => {
   if (t == 0) return b;
@@ -294,7 +295,7 @@ const Grid = {
       Grid.element.layout()
       Grid.interact()
     }, 100);
-    
+
   },
   timeline: {
     element: null,
@@ -629,6 +630,7 @@ const Lightbox = {
       }
     })
     Lightbox.slider.on('select', function() {
+      viewportUnitsBuggyfill.refresh()
       if (this.selectedElement) {
         const selectedId = this.selectedElement.dataset.id
         if (Grid.mediasData)
@@ -644,9 +646,9 @@ const Lightbox = {
       }
     })
     Lightbox.slider.on('staticClick', function(event, pointer, cellElement, cellIndex) {
-      if (!cellElement || event.target.className == 'description' || !Modernizr.touchevents) {
+      if (!cellElement || !Modernizr.touchevents) {
         return;
-      } else {
+      } else if(event.target.classList.contains('content') || event.target.classList.contains('media')) {
         if (pointer.pageX > App.width / 2) {
           Lightbox.checkLastCell('forward')
           this.next()
