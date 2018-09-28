@@ -1,7 +1,7 @@
 <?php
 
 kirbytext::$pre[] = function($kirbytext, $value) {
-  return preg_replace("/( ..) /i", " \${1}&nbsp;", $value);
+  return preg_replace("/( ..) /i", " \${1} ", $value);
 };
 
 file::$methods['formattedName'] = function($file, $key) {
