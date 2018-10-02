@@ -48,11 +48,12 @@
       // check for a match
       if($matches = preg_match_all($preg, $data[$key], $r)) {
 
-        $file->searchHits  += $matches;
-        $file->searchScore += $matches * $score;
+        // $file->searchHits  += $matches;
+        // $file->searchScore += $matches * $score;
 
         // check for full matches
         if($matches = preg_match_all('!' . preg_quote($query) . '!i', $data[$key], $r)) {
+          $file->searchHits  += $matches;
           $file->searchScore += $matches * $score;
         }
 
